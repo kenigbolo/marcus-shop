@@ -4,7 +4,7 @@ class ApplicationController < ActionController::API
   private
 
   def set_current_user
-    Current.user_id = request.headers['X-User-ID']
+    Current.user_id = request.headers['X-User-ID'] || request.headers['X-Admin-ID']
     render json: { error: 'Missing X-User-ID header' }, status: :unauthorized if Current.user_id.blank?
   end
 end
