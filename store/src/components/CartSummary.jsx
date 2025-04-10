@@ -54,7 +54,9 @@ export default function CartSummary({ cartId }) {
         {cart.cart_items.map(item => (
           <li key={item.id} className="text-sm border-b pb-2">
             <div className="flex justify-between items-center mb-1">
-              <p className="font-medium text-gray-800">{item.quantity} × {item.product_id}</p>
+              <p className="font-medium text-gray-800">
+                {item.quantity} × {item.product?.name}
+              </p>
               <button onClick={() => handleRemove(item.id)} className="text-red-600 hover:text-red-800">
                 <TrashIcon className="h-4 w-4 inline" />
               </button>
@@ -62,7 +64,7 @@ export default function CartSummary({ cartId }) {
             <ul className="ml-4 list-disc text-gray-700">
               {(item.cart_item_options || []).map(opt => (
                 <li key={opt.id}>
-                  {opt.part_option_id} — €{opt.price_applied}
+                  {opt.part_option?.name} — €{opt.price_applied}
                 </li>
               ))}
             </ul>
