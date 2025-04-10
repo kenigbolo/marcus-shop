@@ -53,28 +53,27 @@ export default function ProductDetail() {
 
       {product?.parts?.length ? (
         product.parts.map(part => (
-          <div key={part.id} className="mb-6">
-            <h3 className="font-semibold">{part.name}</h3>
+          <div key={part.id} className="mb-8">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              {part.name}
+            </h3>
 
-            {part.part_options?.length ? (
-              <div className="mt-2 flex gap-2 flex-wrap">
-                {part.part_options.map(opt => (
-                  <button
-                    key={opt.id}
-                    onClick={() => handleSelect(part.id, opt.id)}
-                    className={`px-3 py-1 rounded border text-sm ${
-                      selectedOptions[part.id] === opt.id
-                        ? 'bg-indigo-600 text-white'
-                        : 'bg-white border-gray-300 text-gray-700'
-                    }`}
-                  >
-                    {opt.name} (€{opt.base_price})
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-gray-400 italic">No options available</p>
-            )}
+            {(part.part_options || [])
+              .filter(opt => opt.stock_status === 'available')
+              .sort((a, b) => a.base_price - b.base_price)
+              .map(opt => (
+                <button
+                  key={opt.id}
+                  onClick={() => handleSelect(part.id, opt.id)}
+                  className={`inline-block mr-2 mb-2 px-4 py-2 rounded-full border text-sm font-medium shadow-sm transition ${
+                    selectedOptions[part.id] === opt.id
+                      ? 'bg-indigo-600 text-white border-indigo-600'
+                      : 'bg-white border-gray-300 text-gray-700 hover:border-indigo-400'
+                  }`}
+                >
+                  {opt.name} (€{opt.base_price})
+                </button>
+            ))}
           </div>
         ))
       ) : (
