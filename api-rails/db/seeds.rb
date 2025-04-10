@@ -1,13 +1,6 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
-# Clear existing data
+require 'faker'
+
+puts "🧹 Clearing database..."
 CartItemOption.delete_all
 CartItem.delete_all
 Cart.delete_all
@@ -17,109 +10,68 @@ PartOption.delete_all
 Part.delete_all
 Product.delete_all
 
-puts "🌱 Seeding..."
+puts "🌱 Seeding products..."
 
-# Create product
-bike = Product.create!(
-  name: "Custom Bicycle",
-  category: "bicycle",
-  description: "Fully customizable bike built for your style and needs.",
-  is_active: true
-)
-
-# Create parts
-frame = bike.parts.create!(name: "Frame")
-finish = bike.parts.create!(name: "Frame Finish")
-wheels = bike.parts.create!(name: "Wheels")
-rim = bike.parts.create!(name: "Rim Color")
-chain = bike.parts.create!(name: "Chain")
-
-# Frame options
-full_suspension = frame.part_options.create!(name: "Full-suspension", base_price: 130, stock_status: :available)
-diamond = frame.part_options.create!(name: "Diamond", base_price: 110, stock_status: :available)
-step_through = frame.part_options.create!(name: "Step-through", base_price: 100, stock_status: :available)
-
-# Finish options
-matte = finish.part_options.create!(name: "Matte", base_price: 20, stock_status: :available)
-shiny = finish.part_options.create!(name: "Shiny", base_price: 30, stock_status: :available)
-
-# Wheels options
-road = wheels.part_options.create!(name: "Road wheels", base_price: 80, stock_status: :available)
-mountain = wheels.part_options.create!(name: "Mountain wheels", base_price: 100, stock_status: :available)
-fat_bike = wheels.part_options.create!(name: "Fat bike wheels", base_price: 120, stock_status: :available)
-
-# Rim color options
-red_rim = rim.part_options.create!(name: "Red", base_price: 15, stock_status: :available)
-black_rim = rim.part_options.create!(name: "Black", base_price: 10, stock_status: :available)
-blue_rim = rim.part_options.create!(name: "Blue", base_price: 20, stock_status: :available)
-
-# Chain options
-single_speed = chain.part_options.create!(name: "Single-speed chain", base_price: 43, stock_status: :available)
-eight_speed = chain.part_options.create!(name: "8-speed chain", base_price: 60, stock_status: :available)
-
-# Constraints
-# Mountain wheels require Full-suspension frame
-OptionConstraint.create!(
-  part_option: mountain,
-  constraint_type: :requires,
-  related_option: full_suspension
-)
-
-# Fat bike wheels prohibit red rim color
-OptionConstraint.create!(
-  part_option: fat_bike,
-  constraint_type: :prohibits,
-  related_option: red_rim
-)
-
-# Conditional pricing for matte finish depending on frame
-ConditionalPrice.create!(
-  option: matte,
-  context_option: full_suspension,
-  price_override: 50
-)
-
-ConditionalPrice.create!(
-  option: matte,
-  context_option: diamond,
-  price_override: 35
-)
-
-puts "✅ Seeding complete!"
-
-puts "🛒 Creating sample cart..."
-
-# Sample cart for a user
-cart = Cart.create!(user_id: SecureRandom.uuid)
-
-# Select options for a configured bike
-selected_options = [
-  full_suspension,   # Frame
-  shiny,             # Finish
-  road,              # Wheels
-  blue_rim,          # Rim
-  single_speed       # Chain
-]
-
-# Create the cart item
-cart_item = cart.cart_items.create!(
-  product: bike,
-  quantity: 1
-)
-
-# Add selected options to cart item
-selected_options.each do |option|
-  # Apply conditional price if one exists
-  conditional = option.conditional_prices.find do |cp|
-    selected_options.include?(cp.context_option)
-  end
-
-  price = conditional&.price_override || option.base_price
-
-  cart_item.cart_item_options.create!(
-    part_option: option,
-    price_applied: price
+20.times do
+  product = Product.create!(
+    name: "#{Faker::Vehicle.make} #{Faker::Vehicle.model}",
+    category: %w[bicycle skateboard roller-skates ski surfboard].sample,
+    description: Faker::Lorem.paragraph(sentence_count: 2),
+    is_active: [true, true, true, false].sample # most active
   )
+
+  8.times do
+    part = product.parts.create!(
+      name: Faker::Commerce.material
+    )
+
+    6.times do
+      option = part.part_options.create!(
+        name: Faker::Commerce.color.capitalize,
+        base_price: Faker::Commerce.price(range: 10..200),
+        stock_status: PartOption.stock_statuses.keys.sample
+      )
+
+      # Optional: Add constraints randomly
+      if [true, false].sample
+        target_option = PartOption.order('RANDOM()').first
+        next if target_option == option
+
+        OptionConstraint.create!(
+          part_option: option,
+          constraint_type: %w[prohibits requires].sample,
+          related_option: target_option
+        )
+      end
+    end
+  end
 end
 
-puts "✅ Sample cart created!"
+puts "🛒 Creating sample carts..."
+
+10.times do
+  user_id = Faker::Internet.uuid
+  cart = Cart.create!(user_id: user_id)
+
+  # Pick a product with parts and options
+  product = Product.joins(parts: :part_options).distinct.sample
+  next unless product
+
+  selected_options = product.parts.map do |part|
+    part.part_options.available.sample || part.part_options.sample
+  end.compact
+
+  cart_item = cart.cart_items.create!(
+    product: product,
+    quantity: rand(1..3)
+  )
+
+  selected_options.each do |option|
+    cart_item.cart_item_options.create!(
+      part_option: option,
+      price_applied: option.base_price
+    )
+  end
+end
+
+puts "✅ Seed complete with #{Product.count} products and #{Cart.count} carts!"
