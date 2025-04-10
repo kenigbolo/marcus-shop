@@ -25,7 +25,7 @@ marcus-shop/
 From the root of the project:
 
 ```bash
-docker compose up --build -d
+docker-compose up --build -d
 ```
 
 ### 📍 Access the Applications
@@ -62,7 +62,7 @@ npm run dev
 You can seed the database from the Rails container:
 
 ```bash
-docker compose exec api rails db:drop db:create db:migrate db:seed
+docker-compose exec api rails db:drop db:create db:migrate db:seed
 ```
 
 ---
@@ -98,7 +98,7 @@ docker compose exec api rails db:drop db:create db:migrate db:seed
 
 ### Storefront
 - [ ] Persist cart with localStorage
-- [ ] Show real product/option names in cart
+- [x] Show real product/option names in cart
 - [ ] Edit quantity in cart page
 - [ ] Checkout flow
 

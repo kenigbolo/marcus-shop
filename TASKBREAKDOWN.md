@@ -31,7 +31,7 @@
 - [x] Toast notifications
 
 ### 🔹 Improvements
-- [ ] Display product & option **names** (instead of UUIDs) in cart
+- [x] Display product & option **names** (instead of UUIDs) in cart
 - [ ] Show **live price total** while customizing a product
 - [ ] Persist cart ID across sessions (e.g. `localStorage`)
 - [ ] Support **editing quantity** in cart
