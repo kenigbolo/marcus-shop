@@ -87,6 +87,6 @@ export default function ProductDetail() {
       >
         {submitting ? 'Adding...' : 'Add to Cart'}
       </button>
-    </div>
+    </div> 
   )
 }

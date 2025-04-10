@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, Link } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
+import { ShoppingCartIcon } from '@heroicons/react/24/outline'
 import axios from 'axios'
 
 export default function App() {
@@ -18,10 +19,15 @@ export default function App() {
   if (!cartId) return <div>Loading cart...</div>
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold text-center mb-6">Marcus's Custom Bikes</h1>
+    <div className="p-4 max-w-6xl mx-auto">
+      <header className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold text-indigo-700">Marcus's Custom Bikes</h1>
+        <Link to="/cart" className="text-gray-600 hover:text-indigo-700 relative">
+          <ShoppingCartIcon className="h-6 w-6" />
+        </Link>
+      </header>
       <Outlet context={{ cartId }} />
-      <Toaster position="top-right" reverseOrder={false} />
+      <Toaster position="top-center" reverseOrder={false} />
     </div>
   )
 }
