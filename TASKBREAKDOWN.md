@@ -32,7 +32,7 @@
 
 ### 🔹 Improvements
 - [x] Display product & option **names** (instead of UUIDs) in cart
-- [ ] Show **live price total** while customizing a product
+- [x] Show **live price total** while customizing a product
 - [ ] Persist cart ID across sessions (e.g. `localStorage`)
 - [ ] Support **editing quantity** in cart
 - [ ] Add **checkout** page (can be a simple summary for now)
@@ -69,7 +69,7 @@
 - [x] Toast notifications
 
 ### 🔹 Improvements
-- [ ] Update readme with setup instructions
+- [x] Update readme with setup instructions
 - [ ] Auto-reload Rails in Docker with `bin/dev` or `guard`
 - [ ] Basic test coverage (RSpec, React Testing Library)
 

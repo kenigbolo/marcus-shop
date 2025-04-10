@@ -93,7 +93,7 @@ docker-compose exec api rails db:drop db:create db:migrate db:seed
 
 ### Backend
 - [ ] Enforce constraints (e.g. invalid combinations)
-- [ ] Filter out-of-stock options
+- [x] Filter out-of-stock options
 - [ ] Support quantity update and checkout
 
 ### Storefront
