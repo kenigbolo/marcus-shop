@@ -26,23 +26,11 @@ puts "🌱 Seeding products..."
     )
 
     6.times do
-      option = part.part_options.create!(
+      part.part_options.create!(
         name: Faker::Commerce.color.capitalize,
         base_price: Faker::Commerce.price(range: 10..200),
-        stock_status: PartOption.stock_statuses.keys.sample
+        stock_status: 'available'  # ✅ always available
       )
-
-      # Optional: Add constraints randomly
-      if [true, false].sample
-        target_option = PartOption.order('RANDOM()').first
-        next if target_option == option
-
-        OptionConstraint.create!(
-          part_option: option,
-          constraint_type: %w[prohibits requires].sample,
-          related_option: target_option
-        )
-      end
     end
   end
 end
