@@ -1,3 +1,10 @@
 class CartItemOptionSerializer < ActiveModel::Serializer
-  attributes :id, :part_option_id, :price_applied
+  attributes :id, :price_applied
+
+  belongs_to :part_option
+
+  class PartOptionSerializer < ActiveModel::Serializer
+    attributes :id, :name, :base_price
+  end
 end
+
