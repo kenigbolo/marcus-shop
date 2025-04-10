@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react'
 import { useParams, useOutletContext, Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import axios from 'axios'
+import { useCart } from '../context/CartContext'
 
 export default function ProductDetail() {
   const { id } = useParams()
   const { cartId } = useOutletContext()
+  const { refreshCartCount } = useCart()
 
   const [product, setProduct] = useState(null)
   const [selectedOptions, setSelectedOptions] = useState({})
@@ -32,7 +34,9 @@ export default function ProductDetail() {
       }, {
         headers: { 'X-User-ID': '3f2c1de2-b879-4f0e-980f-16a48db451c7' }
       })
+      // After a successful add-to-cart
       toast.success("Item added to cart!")
+      refreshCartCount()
     } catch (err) {
       toast.error("Failed to add to cart")
     } finally {
