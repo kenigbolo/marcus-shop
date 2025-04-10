@@ -11,16 +11,14 @@ module Api
       render json: cart, include: [
         'cart_items.product',
         'cart_items.cart_item_options',
-        'cart_items.cart_item_options.part_option'
+        'cart_items.cart_item_options.part_option',
+        'cart_items.cart_item_options.part_option.part'
       ]
     end
 
     def create
       cart = Cart.create!(user_id: Current.user_id)
       render json: cart, status: :created
-    end
-
-    def index
     end
   end
 end

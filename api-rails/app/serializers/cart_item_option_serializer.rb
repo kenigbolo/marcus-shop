@@ -5,5 +5,11 @@ class CartItemOptionSerializer < ActiveModel::Serializer
 
   class PartOptionSerializer < ActiveModel::Serializer
     attributes :id, :name
+
+    belongs_to :part
+
+    class PartSerializer < ActiveModel::Serializer
+      attributes :id, :name
+    end
   end
 end

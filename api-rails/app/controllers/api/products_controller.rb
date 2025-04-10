@@ -7,7 +7,7 @@ module Api
 
     def show
       product = Product.includes(parts: :part_options).find(params[:id])
-      render json: product
-    end
+      render json: product, include: ['parts.part_options']
+    end    
   end
 end
