@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /app/api
+    volumes:
+      - ./api:/app/api
+      - /app/api/tmp/pids/ # prevents server crash on restart
+    ports:
+      - "3000:3000"
+    environment:
+      - RAILS_ENV=development
+      - DATABASE_URL=postgres://postgres:password@db:5432/marcus_shop
+    depends_on:
+      - db
+
+  store:
+    image: node:18
+    working_dir: /app
+    volumes:
+      - ./store:/app
+    ports:
+      - "5173:5173"
+    command: sh -c "npm install && npm run dev"
+
+  admin:
+    image: node:18
+    working_dir: /app
+    volumes:
+      - ./admin:/app
+    ports:
+      - "4173:4173"
+    command: sh -c "npm install && npm run dev"
+
+  db:
+    image: postgres:14
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: marcus_shop
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:

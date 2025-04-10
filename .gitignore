@@ -1,0 +1,66 @@
+# Node modules (store & admin)
+node_modules/
+**/node_modules/
+
+# Log files
+*.log
+log/
+tmp/
+storage/
+.byebug_history
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Compiled assets / caches
+**/dist/
+**/build/
+**/.vite/
+**/.next/
+**/.cache/
+**/.turbo/
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+
+# OS & Docker junk
+.env
+.env.*.local
+docker-compose.override.yml
+
+# Ruby bundler & Rails
+**/vendor/bundle
+**/.bundle
+**/coverage/
+**/public/packs
+**/public/assets
+**/node_modules
+**/yarn-error.log
+**/yarn.lock
+**/package-lock.json
+
+# Rails specific
+api/tmp/
+api/log/
+api/.byebug_history
+api/db/*.sqlite3
+api/db/*.sqlite3-journal
+
+# Docker artifacts
+*.pid
+**/.docker-volume/
+
+# Docker-mounted Postgres data
+postgres_data/
+
+# PostgreSQL DB files (usually not in your repo, but just in case)
+*.pgsql
+*.psql
+*.sql
+*.dump
+*.backup
+*.pgdata
+
