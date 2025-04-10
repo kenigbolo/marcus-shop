@@ -39,11 +39,14 @@ export default function CartSummary({ cartId }) {
   if (loading) return <p className="text-sm text-gray-400">Loading cart...</p>
   if (!cart || !cart.cart_items?.length) return <p className="text-sm text-gray-500 italic">Your cart is empty.</p>
 
-  const subtotal = cart.cart_items.reduce((total, item) => {
-    const itemTotal = (item.cart_item_options || []).reduce(
-      (sum, opt) => sum + (opt.price_applied || 0), 0
-    )
-    return total + itemTotal * (item.quantity || 1)
+  const subtotal = (cart.cart_items || []).reduce((total, item) => {
+    const itemQuantity = Number(item.quantity || 1)
+  
+    const itemTotal = (item.cart_item_options || []).reduce((sum, opt) => {
+      const price = Number(opt?.price_applied || 0)
+      return sum + price
+    }, 0)
+    return total + itemTotal * itemQuantity
   }, 0)
 
   return (
@@ -64,7 +67,7 @@ export default function CartSummary({ cartId }) {
             <ul className="ml-4 list-disc text-gray-700">
               {(item.cart_item_options || []).map(opt => (
                 <li key={opt.id}>
-                  {opt.part_option?.name} — €{opt.price_applied}
+                  {opt.part_option?.part?.name}: {opt.part_option?.name} — €{opt.price_applied}
                 </li>
               ))}
             </ul>
