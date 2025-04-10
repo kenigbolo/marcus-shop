@@ -31,6 +31,12 @@ module Api
     rescue ActiveRecord::RecordInvalid => e
       render json: { error: e.record.errors.full_messages }, status: :unprocessable_entity
     end
+
+    def destroy
+      cart_item = CartItem.find_by!(id: params[:id], cart_id: params[:cart_id])
+      cart_item.destroy
+      head :no_content
+    end    
   end
 end
 

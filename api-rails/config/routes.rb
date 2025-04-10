@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   namespace :api do
     resources :carts, only: [:show, :create] do
-      resources :items, controller: 'cart_items', only: [:create]
+      resources :items, controller: 'cart_items', only: [:create, :destroy]
     end
     resources :carts, only: [:show, :create]
     resources :products, only: [:index, :show]
