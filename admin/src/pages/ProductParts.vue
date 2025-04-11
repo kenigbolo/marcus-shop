@@ -31,7 +31,47 @@
         class="bg-white p-4 rounded shadow mb-4"
       >
         <!-- Part Name -->
-        <h2 class="text-lg font-semibold mb-2">{{ part.name }}</h2>
+        <div class="flex justify-between items-center mb-2">
+          <template v-if="editingPart === part.id">
+            <input
+              v-model="editedPartName"
+              class="input w-full max-w-xs"
+              placeholder="Part name"
+            />
+            <div class="ml-4 flex gap-2">
+              <button
+                @click="saveEditPart(part.id)"
+                class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm"
+              >
+                Save
+              </button>
+              <button
+                @click="cancelEditPart"
+                class="text-gray-600 hover:text-gray-800 text-sm"
+              >
+                Cancel
+              </button>
+            </div>
+          </template>
+        
+          <template v-else>
+            <h2 class="text-lg font-semibold">{{ part.name }}</h2>
+            <button
+              @click="startEditPart(part)"
+              class="text-indigo-500 text-xs ml-2"
+            >
+              Edit
+            </button>
+            <button
+              @click="deletePart(part.id)"
+              class="text-red-500 text-xs"
+            >
+              Delete
+            </button>
+          </template>
+        </div>
+        <!-- End Part Name -->
+
         <!-- Existing Options -->
         <ul class="text-sm text-gray-700 list-disc ml-5">
           <li v-for="opt in part.part_options || []" :key="opt.id" class="mb-2 bg-gray-50 p-2 rounded border">
@@ -133,8 +173,10 @@ const loading = ref(true)
 const newPartName = ref('')
 const newOptions = ref({}) // keyed by part.id
 const editingOption = ref({}) // keyed by option.id
+const editingPart = ref(null) // part.id
+const editedPartName = ref('')
 
-
+// Create Part
 const createPart = async () => {
   if (!newPartName.value.trim()) return
   try {
@@ -150,6 +192,47 @@ const createPart = async () => {
   }
 }
 
+// Start Editing Parts function
+const startEditPart = (part) => {
+  editingPart.value = part.id
+  editedPartName.value = part.name
+}
+
+const cancelEditPart = () => {
+  editingPart.value = null
+  editedPartName.value = ''
+}
+
+const saveEditPart = async (partId) => {
+  try {
+    await api.put(`/parts/${partId}`, {
+      part: { name: editedPartName.value }
+    })
+    toast.success('Part updated')
+    await fetchParts()
+    cancelEditPart()
+  } catch (err) {
+    toast.error('Failed to update part')
+    console.error('Failed to update part', err)
+  }
+}
+// End editing parts functions
+
+// Delete Part
+const deletePart = async (partId) => {
+  if (!confirm('Are you sure you want to delete this part?')) return
+
+  try {
+    await api.delete(`/parts/${partId}`)
+    toast.success('Part deleted')
+    await fetchParts()
+  } catch (err) {
+    toast.error('Failed to delete part')
+    console.error('Error deleting part:', err)
+  }
+}
+
+// Fetch Parts
 const fetchParts = async () => {
   try {
     const res = await api.get(`/products/${productId}`)
