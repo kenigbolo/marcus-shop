@@ -144,8 +144,8 @@ const createProduct = async () => {
     await api.post('/products', newProduct.value)
     await fetchProducts()
     showForm.value = false
-    newProduct.value = { name: '', category: '', description: '', is_active: true }
     toast.success(`Product: ${newProduct.value.name} created successfully`)
+    newProduct.value = { name: '', category: '', description: '', is_active: true }
   } catch (err) {
     console.error('Failed to create product', err)
     toast.error('Failed to create product')
