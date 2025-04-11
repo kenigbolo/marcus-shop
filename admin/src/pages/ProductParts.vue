@@ -34,18 +34,50 @@
         <h2 class="text-lg font-semibold mb-2">{{ part.name }}</h2>
         <!-- Existing Options -->
         <ul class="text-sm text-gray-700 list-disc ml-5">
-          <li
-            v-for="opt in part.part_options"
-            :key="opt.id"
-            class="mb-1"
-          >
-            {{ opt.name }} — €{{ opt.base_price }} 
-            <span
-              :class="opt.stock_status === 'available' ? 'text-green-600' : 'text-gray-400'"
-              class="ml-2 text-xs uppercase"
-            >
-              ({{ opt.stock_status }})
-            </span>
+          <li v-for="opt in part.part_options || []" :key="opt.id" class="mb-2 bg-gray-50 p-2 rounded border">
+            <template v-if="editingOption[opt.id]">
+              <form @submit.prevent="saveOption(opt.id)" class="grid grid-cols-1 md:grid-cols-5 gap-2 text-sm items-center">
+                <input
+                  v-model="editingOption[opt.id].name"
+                  class="input"
+                  placeholder="Option Name"
+                  required
+                />
+                <input
+                  type="number"
+                  v-model="editingOption[opt.id].base_price"
+                  class="input"
+                  placeholder="Base Price"
+                  required
+                />
+                <select v-model="editingOption[opt.id].stock_status" class="input">
+                  <option value="available">Available</option>
+                  <option value="out_of_stock">Out of Stock</option>
+                </select>
+                <button type="submit" class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
+                  Save
+                </button>
+                <button
+                  type="button"
+                  @click="cancelEditOption(opt.id)"
+                  class="text-gray-600 hover:text-gray-800"
+                >
+                  Cancel
+                </button>
+              </form>
+            </template>
+          
+            <template v-else>
+              {{ opt.name }} — €{{ opt.base_price }}
+              <span
+                :class="opt.stock_status === 'available' ? 'text-green-600' : 'text-gray-400'"
+                class="ml-2 text-xs uppercase"
+              >
+                ({{ opt.stock_status }})
+              </span>
+              <button @click="startEditOption(opt)" class="text-indigo-500 text-xs ml-2">Edit</button>
+              <button @click="deleteOption(opt.id)" class="text-red-500 text-xs ml-2">Delete</button>
+            </template>
           </li>
         </ul>
         <!-- Add New Option Part Form -->
@@ -100,6 +132,8 @@ const loading = ref(true)
 
 const newPartName = ref('')
 const newOptions = ref({}) // keyed by part.id
+const editingOption = ref({}) // keyed by option.id
+
 
 const createPart = async () => {
   if (!newPartName.value.trim()) return
@@ -149,8 +183,52 @@ const createOption = async (partId) => {
   }
 }
 
+const startEditOption = (opt) => {
+  editingOption.value[opt.id] = {
+    name: opt.name,
+    base_price: opt.base_price,
+    stock_status: opt.stock_status
+  }
+}
+
+const cancelEditOption = (id) => {
+  delete editingOption.value[id]
+}
+
+const saveOption = async (id) => {
+  const payload = editingOption.value[id]
+  try {
+    await api.put(`/part_options/${id}`, {
+      part_option: {
+        name: payload.name,
+        base_price: parseFloat(payload.base_price),
+        stock_status: payload.stock_status
+      }
+    })
+    toast.success('Option updated')
+    await fetchParts()
+    cancelEditOption(id)
+  } catch (err) {
+    console.error('Failed to update option', err)
+    toast.error('Failed to save changes')
+  }
+}
+
+const deleteOption = async (id) => {
+  if (!confirm('Delete this option?')) return
+
+  try {
+    await api.delete(`/part_options/${id}`)
+    toast.success('Option deleted')
+    await fetchParts()
+  } catch (err) {
+    console.error('Failed to delete option', err)
+    toast.error('Failed to delete')
+  }
+}
+
+
 onMounted(() => {
-  console.log('Initialized newOptions:', newOptions.value)
   fetchParts().then(() => {
     product.value?.parts?.forEach(part => {
       newOptions.value[part.id] = { name: '', base_price: '', stock_status: 'available' }
