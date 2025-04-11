@@ -67,6 +67,12 @@
               <td class="p-2 border-b flex gap-2">
                 <button @click="startEdit(product)" class="text-indigo-600 hover:underline">Edit</button>
                 <button @click="deleteProduct(product.id)" class="text-red-600 hover:underline">Delete</button>
+                <RouterLink
+                  :to="`/products/${product.id}/parts`"
+                  class="text-indigo-500 hover:underline text-sm"
+                >
+                  Manage Parts
+                </RouterLink>
               </td>
             </template>
           </tr>          
