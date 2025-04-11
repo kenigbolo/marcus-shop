@@ -4,7 +4,7 @@ Rails.application.routes.draw do
       resources :items, controller: 'cart_items', only: [:create, :destroy]
     end
     resources :carts, only: [:show, :create]
-    resources :products, only: [:index, :show]
+    resources :products, only: [:index, :show, :create, :update, :destroy]
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
