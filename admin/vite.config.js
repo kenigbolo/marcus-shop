@@ -9,5 +9,16 @@ export default defineConfig({
     port: 4173,        // 👈 consistent port mapping
     strictPort: true,  // 👈 fail if port 4173 is taken
   },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    coverage: {
+      reporter: ['text', 'json', 'html'],
+      statements: 80,
+      branches: 70,
+      functions: 80,
+      lines: 80
+    }
+  }
 })
 

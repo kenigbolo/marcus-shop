@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1 class="text-2xl font-bold text-indigo-700 mb-4">Products</h1>
-
+    <div v-if="error" class="text-red-500 text-sm mb-4">Failed to load products</div>
     <button
       @click="showForm = !showForm"
       class="mb-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
@@ -133,13 +133,16 @@ const deleteProduct = async (productId) => {
   }
 }
 
+const error = ref(false)
+
 const fetchProducts = async () => {
   loading.value = true
+  error.value = false
   try {
     const res = await api.get('/products')
     products.value = res.data
   } catch (err) {
-    console.error('Failed to load products', err)
+    error.value = true
   } finally {
     loading.value = false
   }

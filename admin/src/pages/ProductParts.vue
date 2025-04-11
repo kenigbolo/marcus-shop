@@ -125,6 +125,7 @@
           <h3 class="text-sm font-semibold mb-2">Add Option</h3>
           <form @submit.prevent="createOption(part.id)" class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <input
+              v-if="newOptions[part.id]"
               v-model="newOptions[part.id].name"
               placeholder="Option Name"
               class="input"
@@ -132,12 +133,13 @@
             />
             <input
               type="number"
+              v-if="newOptions[part.id]"
               v-model="newOptions[part.id].base_price"
               placeholder="Base Price"
               class="input"
               required
             />
-            <select v-model="newOptions[part.id].stock_status" class="input">
+            <select v-if="newOptions[part.id]" v-model="newOptions[part.id].stock_status" class="input">
               <option value="available">Available</option>
               <option value="out_of_stock">Out of Stock</option>
             </select>
