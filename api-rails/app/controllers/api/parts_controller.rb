@@ -12,7 +12,7 @@ class Api::PartsController < ApplicationController
 
   def update
     part = Part.find(params[:id])
-    part.update!(part_params)
+    part.update!(params.require(:part).permit(:name))
     render json: part
   end
 
