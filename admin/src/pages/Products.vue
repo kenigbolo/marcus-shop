@@ -79,6 +79,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import api from '../api'
+import { toast } from 'vue-sonner'
 
 const products = ref([])
 const loading = ref(true)
@@ -106,8 +107,10 @@ const saveEdit = async (productId) => {
     await api.put(`/products/${productId}`, editingProduct.value)
     await fetchProducts()
     editingProduct.value = null
+    toast.success('Product updated successfully')
   } catch (err) {
     console.error('Failed to update product', err)
+    toast.error('Failed to update product')
   }
 }
 
@@ -117,8 +120,10 @@ const deleteProduct = async (productId) => {
   try {
     await api.delete(`/products/${productId}`)
     await fetchProducts()
+    toast.success('Product deleted successfully')
   } catch (err) {
     console.error('Failed to delete product', err)
+    toast.error('Failed to delete product')
   }
 }
 
@@ -140,8 +145,10 @@ const createProduct = async () => {
     await fetchProducts()
     showForm.value = false
     newProduct.value = { name: '', category: '', description: '', is_active: true }
+    toast.success(`Product: ${newProduct.value.name} created successfully`)
   } catch (err) {
     console.error('Failed to create product', err)
+    toast.error('Failed to create product')
   }
 }
 
