@@ -103,9 +103,9 @@ docker-compose exec api rails db:drop db:create db:migrate db:seed
 - [ ] Checkout flow
 
 ### Admin (Vue)
-- [ ] Product CRUD
-- [ ] Manage part options, constraints, pricing
-- [ ] Toggle stock status
+- [x] Product CRUD
+- [x] Manage part options, constraints, pricing
+- [x] Toggle stock status
 - [ ] Admin routing and access control
 
 ---

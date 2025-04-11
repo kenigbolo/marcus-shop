@@ -16,7 +16,7 @@
 - [ ] Support `PATCH /cart_items/:id` to update quantity
 - [ ] Add endpoint: `GET /products/:id/price-preview` (optional)
 - [ ] Add real `User` model and auth association (optional)
-- [ ] Improve cart serializers to return names instead of UUIDs
+- [x] Improve cart serializers to return names instead of UUIDs
 
 ---
 
@@ -37,25 +37,25 @@
 - [ ] Support **editing quantity** in cart
 - [ ] Add **checkout** page (can be a simple summary for now)
 - [ ] Add **error boundaries** and loading skeletons
-- [ ] Extract `axios` setup to a shared API helper file
+- [x] Extract `axios` setup to a shared API helper file
 
 ---
 
 ## 🧑‍💼 Admin Panel (Vue + Vite) — *Not Started Yet*
 
 ### 🔹 Base Setup
-- [ ] Initialize Vue project (`/admin`)
-- [ ] Configure router, layout, and axios with `.env`
+- [x] Initialize Vue project (`/admin`)
+- [x] Configure router, layout, and axios with `.env`
 
 ### 🔹 Feature Pages
-- [ ] Product management (CRUD)
-- [ ] Manage parts and part options
+- [x] Product management (CRUD)
+- [x] Manage parts and part options
 - [ ] Set conditional prices and constraints
-- [ ] Mark part options in/out of stock
+- [x] Mark part options in/out of stock
 - [ ] View and debug carts (optional)
 
 ### 🔹 Admin Experience
-- [ ] Add `X-Admin-ID` header for API calls
+- [x] Add `X-Admin-ID` header for API calls
 - [ ] Add login page (optional, mock auth)
 
 ---
