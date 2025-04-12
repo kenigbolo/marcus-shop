@@ -10,4 +10,10 @@ export default defineConfig({
     strictPort: true
   },
   plugins: [tailwindcss(), react()],
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./src/setupTests.js']
+  },
 })
+
