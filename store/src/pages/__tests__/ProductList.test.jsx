@@ -1,10 +1,15 @@
-import { describe, it, expect } from 'vitest'
+import { BrowserRouter } from 'react-router-dom'
 import { render, screen } from '@testing-library/react'
 import ProductList from '../ProductList'
 
 describe('ProductList', () => {
-  it('renders the Products heading', () => {
-    render(<ProductList />)
-    expect(screen.getByRole('heading', { name: /products/i })).toBeInTheDocument()
+  it('renders product list from API', async () => {
+    render(
+      <BrowserRouter>
+        <ProductList />
+      </BrowserRouter>
+    )
+    const cards = await screen.findAllByRole('heading', { level: 2 })
+    expect(cards.length).toBeGreaterThan(0)
   })
 })

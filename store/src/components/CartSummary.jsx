@@ -60,7 +60,7 @@ export default function CartSummary({ cartId }) {
               <p className="font-medium text-gray-800">
                 {item.quantity} × {item.product?.name}
               </p>
-              <button onClick={() => handleRemove(item.id)} className="text-red-600 hover:text-red-800">
+              <button aria-label="Remove Item" onClick={() => handleRemove(item.id)} className="text-red-600 hover:text-red-800">
                 <TrashIcon className="h-4 w-4 inline" />
               </button>
             </div>
