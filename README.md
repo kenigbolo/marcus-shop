@@ -67,6 +67,22 @@ docker-compose exec api rails db:drop db:create db:migrate db:seed
 
 ---
 
+### Run the tests
+- For the API
+```bash
+docker compose exec api bundle exec rspec
+```
+
+- For the Store UI
+```bash
+cd store && npx vitest run
+```
+
+- For the Admin Dashboard
+```bash
+docker compose exec admin npx vitest run
+```
+
 ## 🧩 Features Implemented
 
 ### Rails API
