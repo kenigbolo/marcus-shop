@@ -130,6 +130,30 @@ Cart logic handles part selection and price overrides based on conditions.
 
 ---
 
+## 🧪 Tests
+
+To run the tests you can run them via either docker or directly within the app
+
+- Running via docker
+   ```bash
+   docker compose exec store npx vitest run
+   ```
+   ```bash
+   docker compose exec admin npx vitest run
+   ```
+   ```bash
+   docker compose exec api bundle exec rspec
+   ```
+- Running within the apps
+   ```bash
+   cd store && npx vitest run
+   ```
+   ```bash
+   cd admin && npx vitest run
+   ```
+   ```bash
+   cd api && bundle exec rspec
+   ```
 
 ## 🧩 Features Implemented
 
@@ -137,11 +161,8 @@ Cart logic handles part selection and price overrides based on conditions.
 - UUID-based models for products, parts, options, constraints, pricing
 - Seeded realistic data with Faker
 - API authentication via `X-User-ID` header
-- Endpoints:
-  - `GET /products`, `GET /products/:id`
-  - `POST /carts`, `GET /carts/:id`
-  - `POST /carts/:cart_id/items`
-  - `DELETE /carts/:cart_id/items/:id`
+- Endpoints: Read more [here](./API.md)
+
 
 ### React Store
 - Product listing with Tailwind styling
