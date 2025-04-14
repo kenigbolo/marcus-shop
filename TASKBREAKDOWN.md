@@ -1,5 +1,64 @@
 # ✅ Marcus Shop Project — Task Checklist
 
+## ✅ Completed Features
+
+- **Products API**
+  - CRUD (create, read, update, delete)
+  - Includes nested parts and part options
+- **Parts and PartOptions API**
+  - CRUD for both entities
+  - Validation of attributes (e.g., required fields, enum values)
+- **Carts and CartItems API**
+  - Create and retrieve cart
+  - Add and remove cart items
+  - Apply conditional prices based on selected options
+- **Storefront**
+  - Product listing and detail page
+  - Add to cart workflow
+  - Cart summary
+- **Admin App**
+  - Admin UI for managing products, parts, and options
+  - Includes form validation and conditional logic
+  - Integrated with Rails API
+- **Test Coverage**
+  - Full request specs for Rails API
+  - Frontend integration tests for store and admin apps
+- **User context via headers**
+  - `X-User-ID` and `X-Admin-ID` handled in `ApplicationController`
+
+---
+
+## 💠 Still To Be Implemented
+
+### 🔶 Conditional Prices (Core Logic Refinement)
+- Persist and retrieve conditional prices for part options
+- Extend JSON response for selected cart items to reflect applied conditional price context
+
+### 🔶 Option Constraints (New Feature)
+- Add support for defining constraints between incompatible or required combinations of options
+- Ensure validation logic is applied when adding a product with selected options to cart
+- UI-level feedback or disabling based on incompatible options
+
+### 🧪 Additional Testing
+- Edge case testing: empty carts, disabled products, out-of-stock options
+- Performance checks on complex cart assemblies
+- JS unit tests for price calculation based on constraints and conditionals
+
+### 🧱 Infrastructure & Dev Setup
+- Add documentation for setting up environment variables
+- Add optional support for seeding test data
+- Auto-restart containers or hot reload instructions for store/admin apps
+
+---
+
+## 🧰 Future (Stretch Goals)
+- Admin dashboard for managing products, parts, and options
+- Authentication and permissions (User vs Admin scope)
+- Cart persistence and session recovery
+- Order checkout flow (conversion of cart into order)
+- Inventory tracking and low-stock notifications
+
+
 ## 📦 Backend (Rails API)
 
 ### 🔹 Functional Tasks
@@ -70,7 +129,7 @@
 
 ### 🔹 Improvements
 - [x] Update readme with setup instructions
-- [ ] Auto-reload Rails in Docker with `bin/dev` or `guard`
-- [ ] Basic test coverage (RSpec, React Testing Library)
+- [x] Auto-reload Rails in Docker with `bin/dev` or `guard`
+- [x] Basic test coverage (RSpec, React Testing Library)
 
 ---
