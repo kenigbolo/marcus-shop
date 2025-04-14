@@ -32,12 +32,12 @@ module Api
     
     def destroy
       product = Product.find(params[:id])
-      if product.destroy
-        head :no_content
-      else
-        render json: { errors: product.errors.full_messages }, status: :unprocessable_entity
-      end
-    end    
+      product.destroy
+      head :no_content
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: 'Product not found' }, status: :not_found
+    end
+        
     
     private
     
