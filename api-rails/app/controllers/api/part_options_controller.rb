@@ -52,7 +52,10 @@ class Api::PartOptionsController < ApplicationController
     option = PartOption.find(params[:id])
     option.destroy
     head :no_content
+  rescue ActiveRecord::RecordNotFound => e
+    render json: { error: e.message }, status: :not_found
   end
+  
 
   private
 
