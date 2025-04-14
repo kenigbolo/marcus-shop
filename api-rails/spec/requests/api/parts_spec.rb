@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe 'Parts API - Index', type: :request do
+  let(:headers) { { 'HTTP_X_USER_ID' => 'test-user-123' } }
   # Index endpoint (GET)
   describe 'GET /api/products/:product_id/parts' do
-    let(:headers) { { 'HTTP_X_USER_ID' => 'test-user-123' } }
 
     let!(:product) do
       Product.create!(
@@ -39,7 +39,6 @@ RSpec.describe 'Parts API - Index', type: :request do
 
   # Create endpoint (POST)
   describe 'POST /api/products/:product_id/parts' do
-    let(:headers) { { 'HTTP_X_USER_ID' => 'test-user-123' } }
 
     let!(:product) do
       Product.create!(
@@ -79,7 +78,6 @@ RSpec.describe 'Parts API - Index', type: :request do
 
   # Edit/Modify endpoint (PATCH)
   describe 'PATCH /api/parts/:id' do
-    let(:headers) { { 'HTTP_X_USER_ID' => 'test-user-123' } }
     let!(:product) do
       Product.create!(
         name: 'Speedster',
@@ -120,7 +118,6 @@ RSpec.describe 'Parts API - Index', type: :request do
 
   # Delete enpoint (DELETE)
   describe 'DELETE /api/parts/:id' do
-    let(:headers) { { 'HTTP_X_USER_ID' => 'test-user-123' } }
     let!(:product) do
       Product.create!(
         name: 'Speedster',

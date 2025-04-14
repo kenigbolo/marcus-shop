@@ -6,5 +6,6 @@ class PartOption < ApplicationRecord
   has_many :conditional_prices, foreign_key: :option_id, dependent: :destroy
 
   validates :name, :base_price, presence: true
+  validates :stock_status, inclusion: { in: %w[available out_of_stock] }
 end
 

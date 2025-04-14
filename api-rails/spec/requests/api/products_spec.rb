@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Products API', type: :request do
+  let(:headers) { { 'HTTP_X_USER_ID' => 'test-user-123' } }
   # Index endpoint
   describe 'GET /api/products' do
     it 'returns only active products with basic fields and optionally parts' do
@@ -25,9 +26,7 @@ RSpec.describe 'Products API', type: :request do
         is_active: false
       )
 
-      get 'http://localhost:3000/api/products', headers: {
-        'HTTP_X_USER_ID' => 'test-user-123'
-      }
+      get 'http://localhost:3000/api/products', headers: headers
 
       expect(response).to have_http_status(:ok)
 
@@ -56,9 +55,7 @@ RSpec.describe 'Products API', type: :request do
       part = Part.create!(name: 'Wheels', product: product)
       PartOption.create!(name: 'Diamond', base_price: 100, stock_status: 'available', part: part)
 
-      get "http://localhost:3000/api/products/#{product.id}", headers: {
-        'HTTP_X_USER_ID' => 'test-user-123'
-      }
+      get "http://localhost:3000/api/products/#{product.id}", headers: headers
 
       expect(response).to have_http_status(:ok)
 
@@ -70,8 +67,6 @@ RSpec.describe 'Products API', type: :request do
 
   # Create endpoint
   describe 'POST /api/products' do
-    let(:headers) { { 'HTTP_X_USER_ID' => 'test-user-123' } }
-
     context 'with valid attributes' do
       let(:valid_attributes) do
         {
@@ -114,7 +109,6 @@ RSpec.describe 'Products API', type: :request do
 
   # Edit/Modify endpoint (PATCH)
   describe 'PATCH /api/products/:id' do
-    let(:headers) { { 'HTTP_X_USER_ID' => 'test-user-123' } }
 
     let!(:product) do
       Product.create!(
@@ -169,7 +163,6 @@ RSpec.describe 'Products API', type: :request do
 
   # Delete enpoint
   describe 'DELETE /api/products/:id' do
-    let(:headers) { { 'HTTP_X_USER_ID' => 'test-user-123' } }
 
     let!(:product) do
       Product.create!(
