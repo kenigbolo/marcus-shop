@@ -62,3 +62,5 @@ group :development do
   # Use listen for live reload during development
   gem "listen"
 end
+
+gem "database_cleaner-active_record", "~> 2.2", :group => :test
