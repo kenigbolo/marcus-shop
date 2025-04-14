@@ -46,34 +46,17 @@ Before running the application, ensure the following are installed:
 2. **Set up environment variables**:
 
    - Copy `.env.example` or `.env.docker` to `.env` inside both the `store/` and `admin/` directories:
-
-      - For runnning the app from the individual project folder
-     ```bash
-     cp store/.env.example store/.env
-     cp admin/.env.example admin/.env
-     ```
-
-      - For runnning the app from docker via docker-compose
-     ```bash
-     cp store/.env.docker store/.env
-     cp admin/.env.docker admin/.env
-     ```
+      ```bash
+      cp store/.env.example store/.env
+      cp admin/.env.example admin/.env
+      ```
 
    - Fill in required variables (example below):
-    
-      - For running apps from individual folders i.e. `/admin` or `/store`
-        ```env
-        VITE_API_BASE_URL=http://localhost:3000/api
-        VITE_USER_ID=3f2c1de2-b879-4f0e-980f-16a48db451c7 # Store
-        VITE_ADMIN_ID=3f2c1de2-b879-4f0e-980f-16a48db451c7 # Admin
-        ```
-
-      - For running apps from docker via docker-compose
-        ```env
-        VITE_API_BASE_URL=http://api:3000/api
-        VITE_USER_ID=3f2c1de2-b879-4f0e-980f-16a48db451c7 # Store
-        VITE_ADMIN_ID=3f2c1de2-b879-4f0e-980f-16a48db451c7 # Admin
-        ```
+      ```env
+      VITE_API_BASE_URL=http://localhost:3000/api
+      VITE_USER_ID=3f2c1de2-b879-4f0e-980f-16a48db451c7 # Store
+      VITE_ADMIN_ID=3f2c1de2-b879-4f0e-980f-16a48db451c7 # Admin
+      ```
 
 3. **Install frontend dependencies**:
 
