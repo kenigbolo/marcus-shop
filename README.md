@@ -1,34 +1,106 @@
-# Marcus Custom Shop — E-commerce Platform
+# 🛍 Marcus Shop Monorepo
 
-Welcome to Marcus's customizable bicycle shop project! This is a full-stack monorepo for an e-commerce platform that allows users to browse, customize, and purchase bicycles online. It is structured for future expansion into other sports-related items like skis, surfboards, and roller skates.
+This monorepo powers an e-commerce platform designed to allow a shop owner (Marcus) to sell customizable bicycles online. It includes:
+
+- 🏬 **Storefront** (React) – A customer-facing application where products can be browsed and customized.
+- 🎛 **Admin Panel** (Vue) – A management interface to configure products and their parts/options.
+- ⚙️ **API** (Rails) – A JSON API powering the frontends.
 
 ---
 
-## 🏗️ Project Structure
+## 📁 Folder Structure
 
 ```
 marcus-shop/
-├── api/         # Ruby on Rails 8 API (PostgreSQL, UUID-based)
-├── store/       # React + Vite + Tailwind customer-facing storefront
-├── admin/       # Vue + Vite admin panel (WIP)
-├── docker-compose.yml
-├── Dockerfile   # Used for Rails API service
-└── README.md
+├── store/        # React (Vite) storefront
+├── admin/        # Vue (Vite) admin UI
+├── api/          # Rails 8 API backend
+└── docker/       # Compose & Docker files
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🔧 Requirements
 
-### 🐳 Start All Services with Docker Compose
+Before running the application, ensure the following are installed:
 
-From the root of the project:
+- **Docker** (>= 20.x)
+- **Docker Compose** (>= 2.x)
+- **Ruby** 3.2.2 (if running the Rails API without Docker)
+- **Rails** 8.0.x
+- **PostgreSQL** >= 14 (only if not using Docker)
+- **Node.js** >= 18.x (used in `store` and `admin`)
+- **Yarn** (recommended for consistent frontend installs)
+
+---
+
+## 📦 Local Setup Instructions
+
+1. **Clone the repository**:
+
+   ```bash
+   git clone https://github.com/kenigbolo/marcus-shop.git
+   cd marcus-shop
+   ```
+
+2. **Set up environment variables**:
+
+   - Copy `.env.example` or `.env.docker` to `.env` inside both the `store/` and `admin/` directories:
+
+      - For runnning the app from the individual project folder
+     ```bash
+     cp store/.env.example store/.env
+     cp admin/.env.example admin/.env
+     ```
+
+      - For runnning the app from docker via docker-compose
+     ```bash
+     cp store/.env.docker store/.env
+     cp admin/.env.docker admin/.env
+     ```
+
+   - Fill in required variables (example below):
+    
+      - For running apps from individual folders i.e. `/admin` or `/store`
+        ```env
+        VITE_API_BASE_URL=http://localhost:3000/api
+        VITE_USER_ID=3f2c1de2-b879-4f0e-980f-16a48db451c7 # Store
+        VITE_ADMIN_ID=3f2c1de2-b879-4f0e-980f-16a48db451c7 # Admin
+        ```
+
+      - For running apps from docker via docker-compose
+        ```env
+        VITE_API_BASE_URL=http://api:3000/api
+        VITE_USER_ID=3f2c1de2-b879-4f0e-980f-16a48db451c7 # Store
+        VITE_ADMIN_ID=3f2c1de2-b879-4f0e-980f-16a48db451c7 # Admin
+        ```
+
+3. **Install frontend dependencies**:
+
+   ```bash
+   cd store && npm install
+   cd ../admin && npm install
+   ```
+
+4. **(Optional)** If running Rails API directly without Docker:
+
+   ```bash
+   cd api
+   bundle install
+   rails db:create db:migrate db:seed
+   ```
+
+---
+
+## 🐳 Docker Usage
+
+From the project root, start everything with:
 
 ```bash
 docker-compose up --build -d
 ```
 
-### 📍 Access the Applications
+Services will be available on:
 
 | Service       | URL                   |
 |---------------|------------------------|
@@ -36,52 +108,28 @@ docker-compose up --build -d
 | Vue Admin     | http://localhost:4173  |
 | Rails API     | http://localhost:3000  |
 
+To seed the Rails database via Docker:
+
+```bash
+docker-compose exec api rails db:reset db:seed
+```
 
 ---
 
 ## 🧪 Dev Notes
 
-### ✅ Environment Configuration
+This repo uses the following tech:
 
-Each frontend app (`store/`, `admin/`) uses `.env` files. For the React store:
+- **React + Vite** for `store/`
+- **Vue + Vite** for `admin/`
+- **Rails 8 API-only** for backend
 
-```env
-# store/.env
-VITE_API_BASE_URL=http://localhost:3000/api
-VITE_USER_ID=3f2c1de2-b879-4f0e-980f-16a48db451c7 (or any valid UUID until authentication is implemented)
-```
+Data structure allows creating products → parts → part_options.
 
-Make sure to restart the Vite server after changing `.env`:
-```bash
-npm run dev
-```
-
-
-### 📦 Seed the Backend
-
-You can seed the database from the Rails container:
-
-```bash
-docker-compose exec api rails db:drop db:create db:migrate db:seed
-```
+Cart logic handles part selection and price overrides based on conditions.
 
 ---
 
-### Run the tests
-- For the API
-```bash
-docker compose exec api bundle exec rspec
-```
-
-- For the Store UI
-```bash
-cd store && npx vitest run
-```
-
-- For the Admin Dashboard
-```bash
-docker compose exec admin npx vitest run
-```
 
 ## 🧩 Features Implemented
 
