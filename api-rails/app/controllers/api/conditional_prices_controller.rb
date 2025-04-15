@@ -13,6 +13,16 @@ module Api
       render json: { errors: e.record.errors.full_messages }, status: :unprocessable_entity
     end
 
+    def update
+      price = ConditionalPrice.find(params[:id])
+      price.update!(conditional_price_params)
+      render json: price
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: 'Not found' }, status: :not_found
+    rescue ActiveRecord::RecordInvalid => e
+      render json: { error: e.record.errors.full_messages }, status: :unprocessable_entity
+    end        
+
     private
 
     def conditional_price_params

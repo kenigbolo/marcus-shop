@@ -21,6 +21,24 @@ RSpec.describe 'ConditionalPrices API', type: :request do
       expect(json.first['context_option_id']).to eq(context.id)
       expect(json.first['price_override'].to_f).to eq(80.0)
     end
+
+    it 'returns all conditional prices for a given part option' do
+      product = Product.create!(name: "Bike XL", category: "bicycle", description: "desc", is_active: true)
+      part = product.parts.create!(name: "Handlebars")
+      option = part.part_options.create!(name: "A", base_price: 100, stock_status: "available")
+      context_option1 = part.part_options.create!(name: 'X', base_price: 90, stock_status: 'available')
+      context_option2 = part.part_options.create!(name: 'Y', base_price: 95, stock_status: 'available')
+    
+      option.conditional_prices.create!(context_option: context_option1, price_override: 85)
+      option.conditional_prices.create!(context_option: context_option2, price_override: 88)
+    
+      get "http://localhost:3000/api/part_options/#{option.id}/conditional_prices", headers: headers
+    
+      expect(response).to have_http_status(:ok)
+      json = JSON.parse(response.body)
+      expect(json.size).to eq(2)
+      expect(json.first['price_override'].to_f).to eq(85.0)
+    end    
   end
 
   describe 'POST /api/part_options/:part_option_id/conditional_prices' do
@@ -61,4 +79,28 @@ RSpec.describe 'ConditionalPrices API', type: :request do
       expect(json['errors']).to include("Price override can't be blank")
     end    
   end
+
+  describe 'PATCH /api/conditional_prices/:id' do
+    it 'updates an existing conditional price' do
+      product = Product.create!(name: 'Update Test', category: 'bicycle', description: 'desc', is_active: true)
+      part = product.parts.create!(name: 'Frame')
+      option = part.part_options.create!(name: 'Steel', base_price: 100, stock_status: 'available')
+      context_option = part.part_options.create!(name: 'Titanium', base_price: 120, stock_status: 'available')
+  
+      price = option.conditional_prices.create!(
+        context_option: context_option,
+        price_override: 90.0
+      )
+  
+      patch "http://localhost:3000/api/conditional_prices/#{price.id}", params: {
+        conditional_price: {
+          price_override: 95.0
+        }
+      }, headers: { 'HTTP_X_ADMIN_ID' => 'admin-123' }
+  
+      expect(response).to have_http_status(:ok)
+      json = JSON.parse(response.body)
+      expect(json['price_override'].to_f).to eq(95.0)
+    end
+  end  
 end

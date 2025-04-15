@@ -16,6 +16,7 @@ Rails.application.routes.draw do
       resources :conditional_prices, only: [:index, :create]
     end    
     
+    resources :conditional_prices, only: [:update]
   end
   
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
