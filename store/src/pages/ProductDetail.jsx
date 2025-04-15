@@ -21,8 +21,18 @@ export default function ProductDetail() {
   }, [id])
 
   const handleSelect = (partId, optionId) => {
-    setSelectedOptions(prev => ({ ...prev, [partId]: optionId }))
+    setSelectedOptions(prev => {
+      // Deselect if already selected
+      if (prev[partId] === optionId) {
+        const updated = { ...prev }
+        delete updated[partId]
+        return updated
+      }
+      // Otherwise, select it
+      return { ...prev, [partId]: optionId }
+    })
   }
+  
 
   const calculateTotalPrice = () => {
     if (!product || !product.parts) return 0
