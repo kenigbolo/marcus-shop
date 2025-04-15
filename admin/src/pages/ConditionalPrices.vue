@@ -9,12 +9,43 @@
 
     <!-- Form -->
     <form @submit.prevent="savePrice" class="space-y-4 p-4 bg-white rounded shadow border border-gray-200">
-      <div>
+      <!-- Part Selector -->
+      <div v-if="!isEditing">
+        <label class="block text-sm font-medium mb-1 text-gray-700">Select Part</label>
+        <select v-model="selectedPartId" class="w-full border rounded p-2">
+          <option disabled value="">-- Select Part --</option>
+          <option
+            v-for="part in availableParts"
+            :key="part.id"
+            :value="part.id"
+          >
+            {{ part.name }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Option Selector -->
+      <div v-if="selectedPart && !isEditing">
         <label class="block text-sm font-medium mb-1 text-gray-700">Context Option</label>
         <select v-model="selectedOptionId" class="w-full border rounded p-2">
           <option disabled value="">-- Select Option --</option>
-          <option v-for="option in partOptions" :key="option.id" :value="option.id">
+          <option
+            v-for="option in selectedPart.part_options"
+            :key="option.id"
+            :value="option.id"
+          >
             {{ option.name }}
+          </option>
+        </select>
+      </div>
+      <div v-if="isEditing">
+        <label class="block text-sm font-medium mb-1 text-gray-700">Context Option</label>
+        <select v-model="selectedOptionId" class="w-full border rounded p-2">
+          <option
+            :key="selectedOptionId"
+            :value="selectedOptionId"
+          >
+            {{ getOptionName(selectedOptionId) }}
           </option>
         </select>
       </div>
@@ -43,7 +74,8 @@
           Cancel
         </button>
       </div>
-    </form>
+    </form> 
+    <!-- End form -->
 
     <!-- Price List -->
     <table class="w-full mt-6 text-left border border-gray-200">
@@ -79,7 +111,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { toast } from 'vue-sonner'
 import { useRoute } from 'vue-router'
 import api from '../api'
@@ -90,14 +122,30 @@ const partId = ref(route.params.part_id)
 const productId = route.query.productId
 const optionName = route.query.optionName || 'Unnamed Option'
 
+const parts = ref([])
 const partOptions = ref([])
 const conditionalPrices = ref([])
 
+const selectedPartId = ref('')
 const selectedOptionId = ref('')
 const priceOverride = ref('')
+
+const currentOption = ref({})
+
 const isEditing = ref(false)
 const editTarget = ref(null)
+
 const url = ref('http://localhost:3000/api')
+
+// Filter out the part being edited
+const availableParts = computed(() =>
+  parts.value.filter(p => p.id !== Number(partId.value))
+)
+
+// The currently selected part from the dropdown
+const selectedPart = computed(() =>
+  parts.value.find(p => p.id === selectedPartId.value)
+)
 
 async function fetchPartOptions() {
   const res = await api.get(`${url.value}/parts/${partId.value}/part_options`)
@@ -131,14 +179,34 @@ async function savePrice() {
   }
 }
 
+// Fetch Parts
+const fetchParts = async () => {
+  try {
+    const res = await api.get(`/products/${productId}`)
+    parts.value = res.data.parts
+  } catch (err) {
+    toast.error('Failed to load product parts')
+    console.error('Failed to load product parts', err)
+  }
+}
+
 function startEdit(price) {
   isEditing.value = true
   editTarget.value = { ...price }
   selectedOptionId.value = price.context_option_id
   priceOverride.value = price.price_override
+  selectedPartId.value = findPartByOptionId(price.context_option_id).id
 }
 
+function findPartByOptionId(optionId) {
+  return parts.value.find(part =>
+    part.part_options.some(option => option.id === optionId)
+  )
+}
+
+
 function resetForm() {
+  selectedPartId.value = ''
   selectedOptionId.value = ''
   priceOverride.value = ''
   isEditing.value = false
@@ -157,12 +225,16 @@ async function deletePrice(id) {
   }
 }
 
-function getOptionName(id) {
-  const found = partOptions.value.find(o => o.id === id)
-  return found ? found.name : 'N/A'
+function getOptionName(optionId) {
+  for (const part of parts.value) {
+    const match = part.part_options.find(option => option.id === optionId)
+    if (match) return match.name
+  }
+  return null
 }
 
+
 onMounted(async () => {
-  await Promise.all([fetchPartOptions(), fetchPrices()])
+  await Promise.all([fetchParts(), fetchPartOptions(), fetchPrices()])
 })
 </script>
