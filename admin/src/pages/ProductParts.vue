@@ -117,6 +117,12 @@
               </span>
               <button @click="startEditOption(opt)" class="text-indigo-500 text-xs ml-2">Edit</button>
               <button @click="deleteOption(opt.id)" class="text-red-500 text-xs ml-2">Delete</button>
+              <router-link
+                :to="`/part/${part.id}/option/${opt.id}/conditional-prices`"
+                class="text-indigo-600 hover:underline"
+              >
+                View Conditional Prices - PartID {{part.id}} - OptionID {{opt.id}}
+              </router-link>
             </template>
           </li>
         </ul>
