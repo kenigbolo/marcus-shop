@@ -24,6 +24,11 @@
   - `X-User-ID` and `X-Admin-ID` handled in `ApplicationController`
 - **Admin App**
   - Configuration and test-ready setup for product/option management
+  - Admin dashboard UI
+  - Inventory and stock handling
+- **🧱 Infrastructure & Dev Setup**
+  - Database seeding with complex examples
+  - Dev notes on multi-app setup (store, admin, API)
 
 ---
 
@@ -40,15 +45,11 @@
 - Frontend validation for constraints (disable/enable options)
 
 ### 🧱 Infrastructure & Dev Setup
-- Database seeding with complex examples
-- Dev notes on multi-app setup (store, admin, API)
 - Linting, formatting, CI integration
 
 ### 🧰 Future (Stretch Goals)
 - User accounts & authentication
-- Admin dashboard UI
 - Persistent cart behavior across sessions
-- Inventory and stock handling
 - Checkout / payments
 
 
@@ -102,7 +103,7 @@
 ### 🔹 Feature Pages
 - [x] Product management (CRUD)
 - [x] Manage parts and part options
-- [ ] Set conditional prices and constraints
+- [x] Set conditional prices and constraints
 - [x] Mark part options in/out of stock
 - [ ] View and debug carts (optional)
 
