@@ -1,5 +1,8 @@
 <template>
   <div>
+    <RouterLink to="/products" class="text-indigo-500 hover:underline text-sm">
+      ← Back to products
+    </RouterLink>
     <h1 class="text-2xl font-bold text-indigo-700 mb-4">
       Parts for: {{ product?.name || 'Loading...' }}
     </h1>
@@ -120,7 +123,7 @@
               <router-link
                 :to="{
                   path: `/part/${part.id}/option/${opt.id}/conditional-prices`,
-                  query: { optionName: opt.name }
+                  query: { optionName: opt.name, productId }
                 }"
                 class="text-indigo-600 hover:underline"
               >
