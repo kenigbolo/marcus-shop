@@ -11,10 +11,10 @@ Rails.application.routes.draw do
     resources :parts, only: [:update, :destroy] do
       resources :part_options, only: [:create]
     end
-  
+
     resources :part_options, only: [:update, :destroy] do
-      resources :conditional_prices, only: [:index]
-    end
+      resources :conditional_prices, only: [:index, :create]
+    end    
     
   end
   
