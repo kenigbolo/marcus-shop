@@ -21,7 +21,15 @@ module Api
       render json: { error: 'Not found' }, status: :not_found
     rescue ActiveRecord::RecordInvalid => e
       render json: { error: e.record.errors.full_messages }, status: :unprocessable_entity
-    end        
+    end
+    
+    def destroy
+      price = ConditionalPrice.find(params[:id])
+      price.destroy
+      head :no_content
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: "ConditionalPrice not found" }, status: :not_found
+    end    
 
     private
 

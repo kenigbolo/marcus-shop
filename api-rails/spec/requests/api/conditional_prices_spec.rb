@@ -96,11 +96,28 @@ RSpec.describe 'ConditionalPrices API', type: :request do
         conditional_price: {
           price_override: 95.0
         }
-      }, headers: { 'HTTP_X_ADMIN_ID' => 'admin-123' }
+      }, headers: headers
   
       expect(response).to have_http_status(:ok)
       json = JSON.parse(response.body)
       expect(json['price_override'].to_f).to eq(95.0)
     end
-  end  
+  end
+  
+  describe 'DELETE /api/conditional_prices/:id' do
+    it 'removes the conditional price and returns 204' do
+      product = Product.create!(name: 'Test Bike', category: 'bicycle', description: 'Test', is_active: true)
+      part = product.parts.create!(name: 'Wheels')
+      option_a = part.part_options.create!(name: 'Steel', base_price: 100, stock_status: 'available')
+      option_b = part.part_options.create!(name: 'Carbon', base_price: 150, stock_status: 'available')
+  
+      price = option_a.conditional_prices.create!(context_option: option_b, price_override: 80)
+  
+      delete "http://localhost:3000/api/conditional_prices/#{price.id}", headers: headers
+  
+      expect(response).to have_http_status(:no_content)
+      expect(ConditionalPrice.find_by(id: price.id)).to be_nil
+    end
+  end
+  
 end
