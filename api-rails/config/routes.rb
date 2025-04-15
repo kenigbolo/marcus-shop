@@ -9,7 +9,7 @@ Rails.application.routes.draw do
     end
   
     resources :parts, only: [:update, :destroy] do
-      resources :part_options, only: [:create]
+      resources :part_options, only: [:index, :create]
     end
 
     resources :part_options, only: [:update, :destroy] do

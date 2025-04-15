@@ -3,6 +3,23 @@ require 'rails_helper'
 RSpec.describe 'PartOptions API', type: :request do
   let(:headers) { { 'HTTP_X_ADMIN_ID' => 'admin-123' } }
 
+  # Fetch endpoint (GET)
+  describe 'GET /api/parts/:part_id/part_options' do
+    let!(:product) { Product.create!(name: 'Bike', category: 'bicycle', description: 'desc', is_active: true) }
+    let!(:part)    { product.parts.create!(name: 'Wheels') }
+    let!(:option1) { part.part_options.create!(name: 'Steel', base_price: 100, stock_status: 'available') }
+    let!(:option2) { part.part_options.create!(name: 'Carbon', base_price: 150, stock_status: 'available') }
+  
+    it 'returns all part options for the part' do
+      get "http://localhost:3000/api/parts/#{part.id}/part_options", headers: { 'HTTP_X_ADMIN_ID' => 'admin-123' }
+  
+      expect(response).to have_http_status(:ok)
+      json = JSON.parse(response.body)
+      expect(json.length).to eq(2)
+      expect(json.map { |o| o['name'] }).to include('Steel', 'Carbon')
+    end
+  end  
+
   # Create endpoint (POST)
   describe 'POST /api/parts/:part_id/part_options' do
     let(:product) { Product.create!(name: "Speedster", category: "bicycle", description: "Fast", is_active: true) }

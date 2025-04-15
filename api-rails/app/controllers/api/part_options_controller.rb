@@ -1,4 +1,8 @@
 class Api::PartOptionsController < ApplicationController
+  def index
+    part = Part.find(params[:part_id])
+    render json: part.part_options
+  end
   def create
     part = Part.find(params[:part_id])
     option = part.part_options.create!(part_option_params)
