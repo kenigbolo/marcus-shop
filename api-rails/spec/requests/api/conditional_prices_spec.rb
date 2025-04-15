@@ -44,5 +44,21 @@ RSpec.describe 'ConditionalPrices API', type: :request do
       expect(json['context_option_id']).to eq(context_option.id)
       expect(json['price_override'].to_f).to eq(125.0)
     end
+
+    it 'returns 422 when required attributes are missing or invalid' do
+      post "http://localhost:3000/api/part_options/#{option.id}/conditional_prices",
+        params: {
+          conditional_price: {
+            context_option_id: nil,      # missing
+            price_override: nil          # missing
+          }
+        },
+        headers: headers
+    
+      expect(response).to have_http_status(:unprocessable_entity)
+      json = JSON.parse(response.body)
+      expect(json['errors']).to include("Context option must exist")
+      expect(json['errors']).to include("Price override can't be blank")
+    end    
   end
 end
