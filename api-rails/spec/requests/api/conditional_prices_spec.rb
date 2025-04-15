@@ -120,4 +120,37 @@ RSpec.describe 'ConditionalPrices API', type: :request do
     end
   end
   
+  # Validation
+  describe 'validations' do
+    let(:product) { Product.create!(name: "Speedster", category: "bicycle", description: "Fast", is_active: true) }
+    let(:part)    { product.parts.create!(name: "Frame") }
+    let(:option)  { part.part_options.create!(name: "Steel", base_price: 100, stock_status: "available") }
+    let(:context_option) { part.part_options.create!(name: "Carbon", base_price: 120, stock_status: "available") }
+
+    it 'allows a unique combination of option and context_option' do
+      cp = ConditionalPrice.create!(
+        option: option,
+        context_option: context_option,
+        price_override: 95
+      )
+      expect(cp).to be_valid
+    end
+
+    it 'prevents duplicate combination of option and context_option' do
+      ConditionalPrice.create!(
+        option: option,
+        context_option: context_option,
+        price_override: 95
+      )
+
+      duplicate = ConditionalPrice.new(
+        option: option,
+        context_option: context_option,
+        price_override: 90
+      )
+
+      expect(duplicate).not_to be_valid
+      expect(duplicate.errors[:option_id]).to include('has already been taken')
+    end
+  end
 end

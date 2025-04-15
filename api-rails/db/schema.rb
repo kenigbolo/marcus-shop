@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_10_090835) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_15_054355) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -48,6 +48,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_10_090835) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["context_option_id"], name: "index_conditional_prices_on_context_option_id"
+    t.index ["option_id", "context_option_id"], name: "index_conditional_prices_on_option_and_context", unique: true
     t.index ["option_id"], name: "index_conditional_prices_on_option_id"
   end
 

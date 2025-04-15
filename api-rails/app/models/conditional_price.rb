@@ -3,5 +3,10 @@ class ConditionalPrice < ApplicationRecord
   belongs_to :context_option, class_name: 'PartOption'
 
   validates :price_override, presence: true
-end
+  validates :option_id, uniqueness: { scope: :context_option_id }
 
+  validates :context_option_id, uniqueness: {
+    scope: :option_id,
+    message: "already has a conditional price for this option"
+  }
+end
