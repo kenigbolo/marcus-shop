@@ -1,5 +1,3 @@
-# ✅ Marcus Shop Project — Task Checklist
-
 ## ✅ Completed Features
 
 - **Products API**
@@ -12,51 +10,46 @@
   - Create and retrieve cart
   - Add and remove cart items
   - Apply conditional prices based on selected options
+- **Conditional Prices**
+  - Define price overrides based on context option
+  - Prevent duplicates/conflicts (uniqueness enforced)
 - **Storefront**
   - Product listing and detail page
   - Add to cart workflow
   - Cart summary
-- **Admin App**
-  - Admin UI for managing products, parts, and options
-  - Includes form validation and conditional logic
-  - Integrated with Rails API
 - **Test Coverage**
   - Full request specs for Rails API
-  - Frontend integration tests for store and admin apps
+  - Frontend integration tests for store app
 - **User context via headers**
   - `X-User-ID` and `X-Admin-ID` handled in `ApplicationController`
+- **Admin App**
+  - Configuration and test-ready setup for product/option management
 
 ---
 
 ## 💠 Still To Be Implemented
 
-### 🔶 Conditional Prices (Core Logic Refinement)
-- Persist and retrieve conditional prices for part options
-- Extend JSON response for selected cart items to reflect applied conditional price context
-
 ### 🔶 Option Constraints (New Feature)
-- Add support for defining constraints between incompatible or required combinations of options
-- Ensure validation logic is applied when adding a product with selected options to cart
-- UI-level feedback or disabling based on incompatible options
+- Model & relationships
+- API support for create, read, update, delete
+- Validation for circular and self-referencing constraints
+- UI experience TBD
 
 ### 🧪 Additional Testing
-- Edge case testing: empty carts, disabled products, out-of-stock options
-- Performance checks on complex cart assemblies
-- JS unit tests for price calculation based on constraints and conditionals
+- Cart behavior when invalid option combinations are selected
+- Frontend validation for constraints (disable/enable options)
 
 ### 🧱 Infrastructure & Dev Setup
-- Add documentation for setting up environment variables
-- Add optional support for seeding test data
-- Auto-restart containers or hot reload instructions for store/admin apps
+- Database seeding with complex examples
+- Dev notes on multi-app setup (store, admin, API)
+- Linting, formatting, CI integration
 
----
-
-## 🧰 Future (Stretch Goals)
-- Admin dashboard for managing products, parts, and options
-- Authentication and permissions (User vs Admin scope)
-- Cart persistence and session recovery
-- Order checkout flow (conversion of cart into order)
-- Inventory tracking and low-stock notifications
+### 🧰 Future (Stretch Goals)
+- User accounts & authentication
+- Admin dashboard UI
+- Persistent cart behavior across sessions
+- Inventory and stock handling
+- Checkout / payments
 
 
 ## 📦 Backend (Rails API)
