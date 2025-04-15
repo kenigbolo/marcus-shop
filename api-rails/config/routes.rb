@@ -12,7 +12,10 @@ Rails.application.routes.draw do
       resources :part_options, only: [:create]
     end
   
-    resources :part_options, only: [:update, :destroy]
+    resources :part_options, only: [:update, :destroy] do
+      resources :conditional_prices, only: [:index]
+    end
+    
   end
   
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
