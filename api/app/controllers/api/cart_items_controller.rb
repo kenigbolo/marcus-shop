@@ -32,6 +32,19 @@ module Api
       render json: { error: e.record.errors.full_messages }, status: :unprocessable_entity
     end
 
+    def update
+      cart = Cart.find_by!(id: params[:cart_id], user_id: Current.user_id)
+      cart_item = cart.cart_items.find_by!(id: params[:id])
+    
+      if cart_item.update(quantity: params[:quantity])
+        render json: cart_item, status: :ok
+      else
+        render json: { error: cart_item.errors.full_messages }, status: :unprocessable_entity
+      end
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: 'Cart item not found' }, status: :not_found
+    end    
+
     def destroy
       cart_item = CartItem.find_by!(id: params[:id], cart_id: params[:cart_id])
       cart_item.destroy

@@ -36,6 +36,23 @@ export default function CartSummary({ cartId }) {
     }
   }
 
+  const updateCartItemQuantity = async (e, item) => {
+    const newQuantity = Number(e.target.value)
+    if (newQuantity < 1) return
+    try {
+      await axios.patch(`${import.meta.env.VITE_API_BASE_URL}/carts/${cartId}/items/${item.id}`, {
+        quantity: newQuantity
+      }, {
+        headers: { 'X-User-ID': import.meta.env.VITE_USER_ID }
+      })
+
+      toast.success("Quantity updated")
+      loadCart()
+    } catch (err) {
+      toast.error("Failed to update quantity")
+    }
+  }
+
   if (loading) return <p className="text-sm text-gray-400">Loading cart...</p>
   if (!cart || !cart.cart_items?.length) return <p className="text-sm text-gray-500 italic">Your cart is empty.</p>
 
@@ -57,13 +74,23 @@ export default function CartSummary({ cartId }) {
         {cart.cart_items.map(item => (
           <li key={item.id} className="text-sm border-b pb-2">
             <div className="flex justify-between items-center mb-1">
-              <p className="font-medium text-gray-800">
-                {item.quantity} × {item.product?.name}
-              </p>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  min="1"
+                  value={item.quantity}
+                  onChange={(e) => updateCartItemQuantity(e, item)}
+                  className="w-16 border rounded px-2 py-1 text-sm"
+                />
+                <span className="font-medium text-gray-800">
+                  × {item.product?.name}
+                </span>
+              </div>
               <button aria-label="Remove Item" onClick={() => handleRemove(item.id)} className="text-red-600 hover:text-red-800">
                 <TrashIcon className="h-4 w-4 inline" />
               </button>
             </div>
+
             <ul className="ml-4 list-disc text-gray-700">
               {(item.cart_item_options || []).map(opt => (
                 <li key={opt.id}>

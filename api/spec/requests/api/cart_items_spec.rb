@@ -37,6 +37,31 @@ RSpec.describe 'CartItems API', type: :request do
     end
   end
 
+  describe 'PATCH /api/carts/:cart_id/items/:id' do
+    let!(:product) do
+      Product.create!(name: "Trail Bike", category: "bicycle", description: "Rugged", is_active: true)
+    end
+    let!(:part) { product.parts.create!(name: "Frame") }
+    let!(:option) do
+      part.part_options.create!(name: "Steel", base_price: 100, stock_status: "available")
+    end
+    let!(:cart) { Cart.create!(user_id: '3f2c1de2-b879-4f0e-980f-16a48db451c7') }
+    let!(:cart_item) { cart.cart_items.create!(product: product, quantity: 1) }
+    let!(:cart_item_option) do
+      cart_item.cart_item_options.create!(part_option: option, price_applied: 100)
+    end
+
+    it 'updates the quantity and returns status 200' do
+      patch "http://localhost:3000/api/carts/#{cart.id}/items/#{cart_item.id}",
+        params: { quantity: 3 },
+        headers: headers
+
+      expect(response).to have_http_status(:ok)
+      json = JSON.parse(response.body)
+      expect(json['quantity']).to eq(3)
+    end
+  end
+
   describe 'DELETE /api/carts/:cart_id/items/:id' do
     let!(:product) do
       Product.create!(name: "Road Bike", category: "bicycle", description: "Light", is_active: true)
@@ -59,3 +84,36 @@ RSpec.describe 'CartItems API', type: :request do
     end
   end
 end
+
+# spec/requests/api/cart_items_spec.rb
+
+# require 'rails_helper'
+
+# RSpec.describe 'CartItems API', type: :request do
+#   let(:headers) { { 'HTTP_X_USER_ID' => '3f2c1de2-b879-4f0e-980f-16a48db451c7' } }
+
+#   describe 'PATCH /api/carts/:cart_id/items/:id' do
+#     let!(:product) do
+#       Product.create!(name: "Trail Bike", category: "bicycle", description: "Rugged", is_active: true)
+#     end
+#     let!(:part) { product.parts.create!(name: "Frame") }
+#     let!(:option) do
+#       part.part_options.create!(name: "Steel", base_price: 100, stock_status: "available")
+#     end
+#     let!(:cart) { Cart.create!(user_id: '3f2c1de2-b879-4f0e-980f-16a48db451c7') }
+#     let!(:cart_item) { cart.cart_items.create!(product: product, quantity: 1) }
+#     let!(:cart_item_option) do
+#       cart_item.cart_item_options.create!(part_option: option, price_applied: 100)
+#     end
+
+#     it 'updates the quantity and returns status 200' do
+#       patch "http://localhost:3000/api/carts/#{cart.id}/items/#{cart_item.id}",
+#         params: { quantity: 3 },
+#         headers: headers
+
+#       expect(response).to have_http_status(:ok)
+#       json = JSON.parse(response.body)
+#       expect(json['quantity']).to eq(3)
+#     end
+#   end
+# end

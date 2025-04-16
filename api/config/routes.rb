@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   namespace :api do
     resources :carts, only: [:show, :create] do
-      resources :items, controller: 'cart_items', only: [:create, :destroy]
+      resources :items, controller: 'cart_items', only: [:create, :update, :destroy]
     end
     resources :carts, only: [:show, :create]
     resources :products, only: [:index, :show, :create, :update, :destroy] do
@@ -14,7 +14,7 @@ Rails.application.routes.draw do
 
     resources :part_options, only: [:update, :destroy] do
       resources :conditional_prices, only: [:index, :create]
-      resources :constraints, only: [:index], controller: 'option_constraints'
+      resources :constraints, only: [:index, :create], controller: 'option_constraints'
     end
     
     resources :conditional_prices, only: [:update, :destroy]
