@@ -162,12 +162,13 @@ To run the tests you can run them via either docker or directly within the app
 ### Backend
 - [ ] Enforce constraints (e.g. invalid combinations)
 - [x] Filter out-of-stock options
-- [ ] Support quantity update and checkout
+- [x] Support quantity update and checkout
+- [ ] Support checkout
 
 ### Storefront
 - [ ] Persist cart with localStorage
 - [x] Show real product/option names in cart
-- [ ] Edit quantity in cart page
+- [x] Edit quantity in cart page
 - [ ] Checkout flow
 
 ### Admin (Vue)

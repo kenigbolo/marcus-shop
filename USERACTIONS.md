@@ -31,6 +31,7 @@ This guide outlines all user-facing actions currently supported across the Store
   - Quantity
   - Subtotal
 - **Remove an item** from the cart.
+- **Edit an item** in the cart.
 - **See updated subtotal** upon item removal.
 
 ---

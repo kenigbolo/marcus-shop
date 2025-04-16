@@ -62,6 +62,7 @@
 - [x] View cart (`GET /carts/:id`)
 - [x] Add cart item (`POST /carts/:cart_id/items`)
 - [x] Remove cart item (`DELETE /carts/:cart_id/items/:id`)
+- [x] Update cart item quantity (`PATCH /carts/:cart_id/items/:id`)
 
 ### 🔹 Enhancements
 - [ ] Validate `OptionConstraint` rules on cart item creation
@@ -87,7 +88,7 @@
 - [x] Display product & option **names** (instead of UUIDs) in cart
 - [x] Show **live price total** while customizing a product
 - [ ] Persist cart ID across sessions (e.g. `localStorage`)
-- [ ] Support **editing quantity** in cart
+- [x] Support **editing quantity** in cart
 - [ ] Add **checkout** page (can be a simple summary for now)
 - [ ] Add **error boundaries** and loading skeletons
 - [x] Extract `axios` setup to a shared API helper file
