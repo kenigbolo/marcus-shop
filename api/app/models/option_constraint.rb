@@ -13,3 +13,4 @@ class OptionConstraint < ApplicationRecord
 
   enum :constraint_type, { prohibits: 0, requires: 1 }
 end
+

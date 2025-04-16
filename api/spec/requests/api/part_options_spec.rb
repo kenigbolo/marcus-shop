@@ -11,7 +11,7 @@ RSpec.describe 'PartOptions API', type: :request do
     let!(:option2) { part.part_options.create!(name: 'Carbon', base_price: 150, stock_status: 'available') }
   
     it 'returns all part options for the part' do
-      get "http://localhost:3000/api/parts/#{part.id}/part_options", headers: { 'HTTP_X_ADMIN_ID' => 'admin-123' }
+      get "http://localhost:3000/api/parts/#{part.id}/part_options", headers: headers
   
       expect(response).to have_http_status(:ok)
       json = JSON.parse(response.body)
