@@ -7,5 +7,6 @@ class PartOption < ApplicationRecord
 
   validates :name, :base_price, presence: true
   validates :stock_status, inclusion: { in: %w[available out_of_stock] }
+  validates :stock_count, numericality: { greater_than_or_equal_to: 0 }
 end
 
