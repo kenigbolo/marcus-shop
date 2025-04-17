@@ -9,7 +9,7 @@ class ProductSerializer < ActiveModel::Serializer
     has_many :part_options
 
     class PartOptionSerializer < ActiveModel::Serializer
-      attributes :id, :name, :base_price, :stock_status
+      attributes :id, :name, :base_price, :stock_status, :stock_count
     end
   end
 end

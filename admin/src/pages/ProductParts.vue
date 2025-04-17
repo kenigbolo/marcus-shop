@@ -6,11 +6,14 @@
     <h1 class="text-2xl font-bold text-indigo-700 mb-4">
       Parts for: {{ product?.name || 'Loading...' }}
     </h1>
+
     <!-- New Part Form -->
     <div class="mb-6 p-4 bg-white rounded shadow border max-w-md">
       <h2 class="text-lg font-semibold mb-2">Add New Part</h2>
       <form @submit.prevent="createPart" class="space-y-4">
+        <label for="newPartName" class="block text-sm font-medium text-gray-700">Part Name</label>
         <input
+          id="newPartName"
           v-model="newPartName"
           placeholder="e.g., Frame, Wheels, Chain"
           class="input"
@@ -18,7 +21,7 @@
         />
         <button
           type="submit"
-          class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+          class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
         >
           Add Part
         </button>
@@ -36,7 +39,9 @@
         <!-- Part Name -->
         <div class="flex justify-between items-center mb-2">
           <template v-if="editingPart === part.id">
+            <label :for="`edit-part-${part.id}`" class="sr-only">Part name</label>
             <input
+              :id="`edit-part-${part.id}`"
               v-model="editedPartName"
               class="input w-full max-w-xs"
               placeholder="Part name"
@@ -50,120 +55,107 @@
               </button>
               <button
                 @click="cancelEditPart"
-                class="text-gray-600 hover:text-gray-800 text-sm"
+                class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 text-sm"
               >
                 Cancel
               </button>
             </div>
           </template>
-        
           <template v-else>
             <h2 class="text-lg font-semibold">{{ part.name }}</h2>
-            <button
-              @click="startEditPart(part)"
-              class="text-indigo-500 text-xs ml-2"
-            >
-              Edit
-            </button>
-            <button
-              @click="deletePart(part.id)"
-              class="text-red-500 text-xs"
-            >
-              Delete
-            </button>
+            <div class="flex gap-2">
+              <button
+                @click="startEditPart(part)"
+                class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 text-xs"
+              >
+                Edit
+              </button>
+              <button
+                @click="deletePart(part.id)"
+                class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-xs"
+              >
+                Delete
+              </button>
+            </div>
           </template>
         </div>
-        <!-- End Part Name -->
 
         <!-- Existing Options -->
-        <ul class="text-sm text-gray-700 list-disc ml-5">
-          <li v-for="opt in part.part_options || []" :key="opt.id" class="mb-2 bg-gray-50 p-2 rounded border">
+        <ul class="grid gap-3">
+          <li
+            v-for="opt in part.part_options || []"
+            :key="opt.id"
+            class="p-3 rounded border shadow-sm bg-gray-50"
+          >
             <template v-if="editingOption[opt.id]">
-              <form @submit.prevent="saveOption(opt.id)" class="grid grid-cols-1 md:grid-cols-5 gap-2 text-sm items-center">
-                <input
-                  v-model="editingOption[opt.id].name"
-                  class="input"
-                  placeholder="Option Name"
-                  required
-                />
-                <input
-                  type="number"
-                  v-model="editingOption[opt.id].base_price"
-                  class="input"
-                  placeholder="Base Price"
-                  required
-                />
-                <select v-model="editingOption[opt.id].stock_status" class="input">
-                  <option value="available">Available</option>
-                  <option value="out_of_stock">Out of Stock</option>
-                </select>
-                <button type="submit" class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
-                  Save
-                </button>
-                <button
-                  type="button"
-                  @click="cancelEditOption(opt.id)"
-                  class="text-gray-600 hover:text-gray-800"
-                >
-                  Cancel
-                </button>
+              <form @submit.prevent="saveOption(opt.id)" class="grid grid-cols-1 md:grid-cols-5 gap-2 items-center text-sm">
+                <div>
+                  <label :for="`edit-name-${opt.id}`" class="block text-xs font-medium text-gray-600">Name</label>
+                  <input id="edit-name-${opt.id}" v-model="editingOption[opt.id].name" class="input" required />
+                </div>
+                <div>
+                  <label :for="`edit-price-${opt.id}`" class="block text-xs font-medium text-gray-600">Price</label>
+                  <input id="edit-price-${opt.id}" type="number" v-model="editingOption[opt.id].base_price" class="input" required />
+                </div>
+                <div>
+                  <label :for="`edit-stock-${opt.id}`" class="block text-xs font-medium text-gray-600">Stock</label>
+                  <input id="edit-stock-${opt.id}" type="number" min="0" v-model="editingOption[opt.id].stock_count" class="input" required />
+                </div>
+                <div>
+                  <label :for="`edit-status-${opt.id}`" class="block text-xs font-medium text-gray-600">Status</label>
+                  <select id="edit-status-${opt.id}" v-model="editingOption[opt.id].stock_status" class="input">
+                    <option value="available">Available</option>
+                    <option value="out_of_stock">Out of Stock</option>
+                  </select>
+                </div>
+                <div class="flex gap-2">
+                  <button type="submit" class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">Save</button>
+                  <button type="button" @click="cancelEditOption(opt.id)" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
+                    Cancel
+                  </button>
+                </div>
               </form>
             </template>
-          
             <template v-else>
-              {{ opt.name }} — €{{ opt.base_price }}
-              <span
-                :class="opt.stock_status === 'available' ? 'text-green-600' : 'text-gray-400'"
-                class="ml-2 text-xs uppercase"
-              >
-                ({{ opt.stock_status }})
-              </span>
-              <button @click="startEditOption(opt)" class="text-indigo-500 text-xs ml-2">Edit</button>
-              <button @click="deleteOption(opt.id)" class="text-red-500 text-xs ml-2">Delete</button>
-              <router-link
-                :to="{
-                  path: `/part/${part.id}/option/${opt.id}/conditional-prices`,
-                  query: { optionName: opt.name, productId }
-                }"
-                class="text-indigo-600 hover:underline"
-              >
-                Set Conditional Prices
-              </router-link>
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="font-medium text-gray-800">
+                    {{ opt.name }} — €{{ opt.base_price }}
+                    <span
+                      class="ml-2 text-xs uppercase"
+                      :class="opt.stock_status === 'available' ? 'text-green-600' : 'text-gray-400'"
+                    >
+                      ({{ opt.stock_status }})
+                    </span>
+                    <span v-if="opt.stock_count >= 0" class="ml-2 text-xs text-gray-700">
+                      • {{ opt.stock_count }} in stock
+                    </span>
+                    <span v-if="opt.stock_count < 3" class="ml-2 text-xs text-red-600 font-semibold">
+                      🔴 Low stock
+                    </span>
+                  </p>
+                  <router-link
+                    :to="{
+                      path: `/part/${part.id}/option/${opt.id}/conditional-prices`,
+                      query: { optionName: opt.name, productId }
+                    }"
+                    class="text-indigo-600 hover:underline text-xs"
+                  >
+                    Set Conditional Prices
+                  </router-link>
+                </div>
+                <div class="flex gap-2">
+                  <button @click="startEditOption(opt)" class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 text-xs">
+                    Edit
+                  </button>
+                  <button @click="deleteOption(opt.id)" class="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 text-xs">
+                    Delete
+                  </button>
+                </div>
+              </div>
             </template>
           </li>
         </ul>
-        <!-- Add New Option Part Form -->
-        <div class="mt-4 p-3 border border-gray-200 rounded bg-gray-50">
-          <h3 class="text-sm font-semibold mb-2">Add Option</h3>
-          <form @submit.prevent="createOption(part.id)" class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-            <input
-              v-if="newOptions[part.id]"
-              v-model="newOptions[part.id].name"
-              placeholder="Option Name"
-              class="input"
-              required
-            />
-            <input
-              type="number"
-              v-if="newOptions[part.id]"
-              v-model="newOptions[part.id].base_price"
-              placeholder="Base Price"
-              class="input"
-              required
-            />
-            <select v-if="newOptions[part.id]" v-model="newOptions[part.id].stock_status" class="input">
-              <option value="available">Available</option>
-              <option value="out_of_stock">Out of Stock</option>
-            </select>
-            <button
-              type="submit"
-              class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 col-span-1 md:col-span-3"
-            >
-              Add Option
-            </button>
-          </form>
-        </div>
-        <!-- End New Option Part Form -->
       </div>
     </div>
 
@@ -172,6 +164,7 @@
     </RouterLink>
   </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted } from 'vue'
@@ -261,18 +254,24 @@ const fetchParts = async () => {
 
 const createOption = async (partId) => {
   const payload = newOptions.value[partId]
+  // Client side validation
   if (!payload?.name || payload.base_price === undefined) return
-
+  if (payload.stock_count < 0) {
+    toast.error('Stock count cannot be negative')
+    return
+  }
+  // Trigger api call
   try {
     await api.post(`/parts/${partId}/part_options`, {
       part_option: {
         name: payload.name,
         base_price: parseFloat(payload.base_price),
-        stock_status: payload.stock_status || 'available'
+        stock_status: payload.stock_status || 'available',
+        stock_count: parseInt(payload.stock_count || 0, 10)
       }
     })
     toast.success('Option added')
-    newOptions.value[partId] = { name: '', base_price: '', stock_status: 'available' }
+    newOptions.value[partId] = { name: '', base_price: '', stock_status: 'available', stock_count: 0 }
     await fetchParts()
   } catch (err) {
     console.error('Failed to create option', err)
@@ -284,7 +283,8 @@ const startEditOption = (opt) => {
   editingOption.value[opt.id] = {
     name: opt.name,
     base_price: opt.base_price,
-    stock_status: opt.stock_status
+    stock_status: opt.stock_status,
+    stock_count: opt.stock_count ?? 0
   }
 }
 
@@ -294,12 +294,20 @@ const cancelEditOption = (id) => {
 
 const saveOption = async (id) => {
   const payload = editingOption.value[id]
+  // Client side validations
+  if (!payload?.name || payload.base_price === undefined) return
+  if (payload.stock_count < 0) {
+    toast.error('Stock count cannot be negative')
+    return
+  }
+  // Trigger api call to save part option
   try {
     await api.put(`/part_options/${id}`, {
       part_option: {
         name: payload.name,
         base_price: parseFloat(payload.base_price),
-        stock_status: payload.stock_status
+        stock_status: payload.stock_status,
+        stock_count: parseInt(payload.stock_count || 0, 10)
       }
     })
     toast.success('Option updated')
@@ -328,7 +336,7 @@ const deleteOption = async (id) => {
 onMounted(() => {
   fetchParts().then(() => {
     product.value?.parts?.forEach(part => {
-      newOptions.value[part.id] = { name: '', base_price: '', stock_status: 'available' }
+      newOptions.value[part.id] = { name: '', base_price: '', stock_status: 'available', stock_count: 0 }
     })
   })
 })

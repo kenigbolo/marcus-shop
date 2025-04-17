@@ -29,7 +29,8 @@ puts "🌱 Seeding products..."
       part.part_options.create!(
         name: Faker::Commerce.color.capitalize,
         base_price: Faker::Commerce.price(range: 10..200),
-        stock_status: 'available'  # ✅ always available
+        stock_status: 'available',  # ✅ always available
+        stock_count: 10
       )
     end
   end

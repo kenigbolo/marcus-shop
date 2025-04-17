@@ -35,6 +35,6 @@ class Api::PartOptionsController < ApplicationController
   private
 
   def part_option_params
-    params.require(:part_option).permit(:name, :base_price, :stock_status)
+    params.require(:part_option).permit(:name, :base_price, :stock_status, :stock_count)
   end
 end
