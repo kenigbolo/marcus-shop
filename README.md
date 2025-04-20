@@ -94,7 +94,7 @@ Services will be available on:
 To seed the Rails database via Docker:
 
 ```bash
-docker-compose exec api rails db:reset db:seed
+docker-compose exec api rails db:drop db:create db:migrate db:seed
 ```
 
 ---
