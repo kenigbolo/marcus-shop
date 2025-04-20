@@ -27,7 +27,14 @@ module Api
         render json: { errors: constraint.errors.full_messages }, status: :unprocessable_entity
       end
     end
-        
+    
+    def destroy
+      constraint = OptionConstraint.find(params[:id])
+      constraint.destroy
+      head :no_content
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: "Option constraint not found" }, status: :not_found
+    end    
   
     private
   

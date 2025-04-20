@@ -18,10 +18,9 @@ Rails.application.routes.draw do
       resources :conditional_prices, only: [:index, :create]
       resources :constraints, only: [:index, :create], controller: 'option_constraints'
     end
-
-    resources :option_constraints, only: [:update]
     
     resources :conditional_prices, only: [:update, :destroy]
+    resources :option_constraints, only: [:update, :destroy]
   end
   
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

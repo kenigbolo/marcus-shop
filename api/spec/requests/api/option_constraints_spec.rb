@@ -92,5 +92,27 @@ RSpec.describe 'OptionConstraints API', type: :request do
       json = JSON.parse(response.body)
       expect(json['errors']).to include("Constraint type can't be blank")
     end
+  end
+  
+  describe 'DELETE /api/option_constraints/:id' do
+    let!(:product) { Product.create!(name: 'Test Bike', category: 'bike', description: 'desc', is_active: true) }
+    let!(:part) { product.parts.create!(name: 'Wheels') }
+    let!(:option_a) { part.part_options.create!(name: 'Mountain', base_price: 100, stock_status: 'available') }
+    let!(:option_b) { part.part_options.create!(name: 'Diamond', base_price: 120, stock_status: 'available') }
+  
+    let!(:constraint) do
+      OptionConstraint.create!(
+        source_option: option_a,
+        target_option: option_b,
+        constraint_type: 'prohibits'
+      )
+    end
+  
+    it 'deletes the constraint and returns 204' do
+      delete "http://localhost:3000/api/option_constraints/#{constraint.id}", headers: headers
+  
+      expect(response).to have_http_status(:no_content)
+      expect(OptionConstraint.exists?(constraint.id)).to be_falsey
+    end
   end  
 end
