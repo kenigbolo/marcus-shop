@@ -29,15 +29,15 @@
 - **🧱 Infrastructure & Dev Setup**
   - Database seeding with complex examples
   - Dev notes on multi-app setup (store, admin, API)
-
+- **🔶 Option Constraints**
+  - Model & relationships
+  - API support for create, read, update, delete
+  - Validation for circular and self-referencing constraints
 ---
 
 ## 💠 Still To Be Implemented
 
 ### 🔶 Option Constraints (New Feature)
-- Model & relationships
-- API support for create, read, update, delete
-- Validation for circular and self-referencing constraints
 - UI experience TBD
 
 ### 🧪 Additional Testing
@@ -65,9 +65,9 @@
 - [x] Update cart item quantity (`PATCH /carts/:cart_id/items/:id`)
 
 ### 🔹 Enhancements
-- [ ] Validate `OptionConstraint` rules on cart item creation
+- [x] Validate `OptionConstraint` rules on cart item creation
 - [ ] Apply `stock_status` availability filtering on option selectors
-- [ ] Support `PATCH /cart_items/:id` to update quantity
+- [x] Support `PATCH /cart_items/:id` to update quantity
 - [ ] Add endpoint: `GET /products/:id/price-preview` (optional)
 - [ ] Add real `User` model and auth association (optional)
 - [x] Improve cart serializers to return names instead of UUIDs

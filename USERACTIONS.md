@@ -55,9 +55,9 @@ This guide outlines all user-facing actions currently supported across the Store
   - The current part and its options are **excluded** from selection to prevent self-reference.
 - **Edit or delete** existing conditional prices.
 
-### 🛑 Option Constraints (Planned)
+### 🎉 Option Constraints
 
-- [Planned Feature] Add rules that:
+- Add rules that:
   - **Require** selecting one option if another is selected.
   - **Prohibit** selecting certain combinations.
 - [UI TBD]
