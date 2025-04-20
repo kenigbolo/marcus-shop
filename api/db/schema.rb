@@ -15,9 +15,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_16_100000) do
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
 
-  create_table "cart_item_options", force: :cascade do |t|
-    t.bigint "cart_item_id", null: false
-    t.bigint "part_option_id", null: false
+  create_table "cart_item_options", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "cart_item_id", null: false
+    t.uuid "part_option_id", null: false
     t.decimal "price_applied"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -25,25 +25,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_16_100000) do
     t.index ["part_option_id"], name: "index_cart_item_options_on_part_option_id"
   end
 
-  create_table "cart_items", force: :cascade do |t|
-    t.bigint "product_id", null: false
+  create_table "cart_items", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "product_id", null: false
     t.integer "quantity"
-    t.bigint "cart_id", null: false
+    t.uuid "cart_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["cart_id"], name: "index_cart_items_on_cart_id"
     t.index ["product_id"], name: "index_cart_items_on_product_id"
   end
 
-  create_table "carts", force: :cascade do |t|
-    t.uuid "user_id"
+  create_table "carts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "conditional_prices", force: :cascade do |t|
-    t.bigint "option_id", null: false
-    t.bigint "context_option_id", null: false
+  create_table "conditional_prices", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "option_id", null: false
+    t.uuid "context_option_id", null: false
     t.decimal "price_override", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -52,35 +52,26 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_16_100000) do
     t.index ["option_id"], name: "index_conditional_prices_on_option_id"
   end
 
-  create_table "option_constraints", force: :cascade do |t|
-    t.bigint "part_option_id", null: false
-    t.uuid "related_option_id"
-    t.integer "constraint_type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["part_option_id"], name: "index_option_constraints_on_part_option_id"
-  end
-
-  create_table "part_options", force: :cascade do |t|
+  create_table "part_options", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
     t.decimal "base_price"
     t.integer "stock_status"
-    t.bigint "part_id", null: false
+    t.uuid "part_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "stock_count", default: 0, null: false
     t.index ["part_id"], name: "index_part_options_on_part_id"
   end
 
-  create_table "parts", force: :cascade do |t|
+  create_table "parts", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
-    t.bigint "product_id", null: false
+    t.uuid "product_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["product_id"], name: "index_parts_on_product_id"
   end
 
-  create_table "products", force: :cascade do |t|
+  create_table "products", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
     t.string "category"
     t.text "description"
@@ -95,7 +86,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_16_100000) do
   add_foreign_key "cart_items", "products"
   add_foreign_key "conditional_prices", "part_options", column: "context_option_id"
   add_foreign_key "conditional_prices", "part_options", column: "option_id"
-  add_foreign_key "option_constraints", "part_options"
   add_foreign_key "part_options", "parts"
   add_foreign_key "parts", "products"
 end
