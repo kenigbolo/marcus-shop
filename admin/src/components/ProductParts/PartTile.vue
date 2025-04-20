@@ -68,6 +68,13 @@
               >
                 Set Conditional Prices
               </router-link>
+              ||
+              <router-link
+                :to="{ path: `/part/${part.id}/option/${opt.id}/constraints`, query: { optionName: opt.name, productId } }"
+                class="text-indigo-600 hover:underline text-xs"
+              >
+                Set Constraints
+              </router-link>
             </div>
             <div class="flex gap-2">
               <button @click="$emit('startEditOption', opt)" class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 text-xs">Edit</button>
