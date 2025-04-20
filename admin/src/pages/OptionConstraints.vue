@@ -8,111 +8,22 @@
       Constraints for: {{ optionName || 'Selected Option' }}
     </h1>
 
-    <!-- Create Form -->
-    <form @submit.prevent="submitConstraint" class="space-y-4 mb-8">
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Part</label>
-        <select v-model="selectedPartId" class="input">
-          <option disabled value="">-- Select Part --</option>
-          <option
-            v-for="part in availableParts"
-            :key="part.id"
-            :value="part.id"
-          >
-            {{ part.name }}
-          </option>
-        </select>
-      </div>
+    <!-- Constraint Form -->
+    <ConstraintForm
+      :parts="parts"
+      :option-id="optionId"
+      @submitted="submitConstraint"
+    />
 
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Option</label>
-        <select v-model="selectedOptionId" class="input" :disabled="!selectedPartId">
-          <option disabled value="">-- Select Option --</option>
-          <option
-            v-for="option in optionsForSelectedPart"
-            :key="option.id"
-            :value="option.id"
-          >
-            {{ option.name }}
-          </option>
-        </select>
-      </div>
 
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Constraint Type</label>
-        <select v-model="constraintType" class="input">
-          <option value="prohibits">Prohibits</option>
-          <option value="requires">Requires</option>
-        </select>
-      </div>
 
-      <button
-        type="submit"
-        class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
-      >
-        Add Constraint
-      </button>
-    </form>
-
-    <!-- Existing Constraints -->
-    <div v-if="constraints.length">
-      <h2 class="text-lg font-semibold mb-2">Current Constraints</h2>
-      <ul class="divide-y border rounded">
-        <li
-          v-for="constraint in constraints"
-          :key="constraint.id"
-          class="flex justify-between items-center p-3 text-sm"
-        >
-          <div v-if="editingId !== constraint.id">
-            <span class="font-medium">{{ constraint.constraint_type.toUpperCase() }}</span> → 
-            {{ getOptionName(constraint.target_option_id) }}
-          </div>
-
-          <!-- Edit Form -->
-          <div v-else class="flex gap-2 items-center w-full">
-            <select v-model="editConstraintType" class="input w-1/2">
-              <option value="prohibits">Prohibits</option>
-              <option value="requires">Requires</option>
-            </select>
-            <select v-model="editTargetOptionId" class="input w-1/2">
-              <option
-                v-for="opt in allOptionsExcludingSource"
-                :key="opt.id"
-                :value="opt.id"
-              >
-                {{ opt.name }}
-              </option>
-            </select>
-          </div>
-
-          <!-- Actions -->
-          <div class="flex gap-2">
-            <button
-              v-if="editingId !== constraint.id"
-              @click="startEdit(constraint)"
-              class="text-xs bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded"
-            >
-              Edit
-            </button>
-            <button
-              v-else
-              @click="saveEdit(constraint.id)"
-              class="text-xs bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded"
-            >
-              Save
-            </button>
-            <button
-              @click="deleteConstraint(constraint.id)"
-              class="text-xs bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded"
-            >
-              Delete
-            </button>
-          </div>
-        </li>
-      </ul>
-    </div>
-
-    <p v-else class="text-sm text-gray-500 italic">No constraints added yet.</p>
+    <!-- Replace this block -->
+    <ConstraintList
+      :constraints="constraints"
+      :parts="parts"
+      @delete="deleteConstraint"
+      @update="updateConstraint"
+    />
   </div>
 </template>
 
@@ -121,19 +32,13 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import api from '../api'
 import { toast } from 'vue-sonner'
+import ConstraintForm from '../components/Constraints/ConstraintForm.vue'
+import ConstraintList from '../components/Constraints/ConstraintList.vue'
 
 const route = useRoute()
 const optionName = route.query.optionName || ''
 const optionId = route.params.option_id
 const productId = route.query.productId
-
-const selectedPartId = ref('')
-const selectedOptionId = ref('')
-const constraintType = ref('prohibits')
-
-const editingId = ref(null)
-const editConstraintType = ref('')
-const editTargetOptionId = ref('')
 
 const parts = ref([])
 const constraints = ref([])
@@ -158,72 +63,37 @@ const fetchConstraints = async () => {
   }
 }
 
-const availableParts = computed(() => {
-  const parentPart = parts.value.find(part =>
-    part.part_options.some(option => option.id === optionId)
-  )
-  return parts.value.filter(part => part.id !== parentPart?.id)
-})
-
-const allOptionsExcludingSource = computed(() => {
-  return parts.value
-    .flatMap(p => p.part_options)
-    .filter(opt => opt.id !== optionId)
-})
-
-const optionsForSelectedPart = computed(() => {
-  return parts.value.find(part => part.id === selectedPartId.value)?.part_options || []
-})
-
-const getOptionName = (id) => {
-  const allOptions = parts.value.flatMap(p => p.part_options || [])
-  return allOptions.find(opt => opt.id === id)?.name || 'Unknown'
-}
-
-const submitConstraint = async () => {
-  if (!selectedOptionId.value || !constraintType.value) return
-
+const submitConstraint = async (payload) => {
   try {
     const { data } = await api.post(`${url.value}/part_options/${optionId}/constraints`, {
-      option_constraint: {
-        source_option_id: optionId,
-        target_option_id: selectedOptionId.value,
-        constraint_type: constraintType.value
-      }
+      option_constraint: payload
     })
     constraints.value.push(data)
     toast.success('Constraint added!')
-    selectedPartId.value = ''
-    selectedOptionId.value = ''
-    constraintType.value = 'prohibits'
   } catch (err) {
-    console.error(err)
-    toast.error('Failed to add constraint')
+    const error = err?.response?.data?.errors?.[0]
+    error ? toast.error(error) : toast.error('Failed to add constraint')
   }
 }
 
-const startEdit = (constraint) => {
-  editingId.value = constraint.id
-  editConstraintType.value = constraint.constraint_type
-  editTargetOptionId.value = constraint.target_option_id
-}
-
-const saveEdit = async (id) => {
+const updateConstraint = async (updatedConstraint) => {
   try {
-    const res = await api.patch(`${url.value}/option_constraints/${id}`, {
+    const { data } = await api.patch(`${url.value}/option_constraints/${updatedConstraint.id}`, {
       option_constraint: {
-        constraint_type: editConstraintType.value,
-        target_option_id: editTargetOptionId.value
+        constraint_type: updatedConstraint.constraint_type
       }
     })
-    const idx = constraints.value.findIndex(c => c.id === id)
-    constraints.value[idx] = res.data
-    toast.success('Constraint updated')
-    editingId.value = null
+    const index = constraints.value.findIndex(c => c.id === updatedConstraint.id)
+    if (index !== -1) {
+      constraints.value[index] = data
+    }
+    toast.success("Constraint updated!")
   } catch (err) {
-    toast.error('Failed to save constraint')
+    toast.error("Failed to update constraint")
+    console.error(err)
   }
 }
+
 
 const deleteConstraint = async (id) => {
   if (!confirm('Are you sure?')) return
