@@ -5,7 +5,6 @@ CartItemOption.delete_all
 CartItem.delete_all
 Cart.delete_all
 ConditionalPrice.delete_all
-OptionConstraint.delete_all
 PartOption.delete_all
 Part.delete_all
 Product.delete_all
