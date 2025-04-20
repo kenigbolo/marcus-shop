@@ -57,10 +57,14 @@ This guide outlines all user-facing actions currently supported across the Store
 
 ### 🎉 Option Constraints
 
-- Add rules that:
-  - **Require** selecting one option if another is selected.
-  - **Prohibit** selecting certain combinations.
-- [UI TBD]
+- **Access option constraints UI** from a part option row.
+- **View all existing option constriants** for the selected part option.
+- **Add a new option constraint**:
+  - Choose a context part.
+  - Select a context option.
+  - choose the constraint between **prohibits** and **requires**.
+  - The current part and its options are **excluded** from selection to prevent self-reference.
+- **Edit or delete** existing option constraints.
 
 ---
 
@@ -72,6 +76,7 @@ This guide outlines all user-facing actions currently supported across the Store
   - PartOptions
   - ConditionalPrices
   - Carts and CartItems
+  - Options Constraints
 - Storefront: Frontend tests with Vitest + Testing Library
 - Admin: Vue components tested manually (E2E testing optional)
 
