@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_16_100000) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_20_092301) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -52,6 +52,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_16_100000) do
     t.index ["option_id"], name: "index_conditional_prices_on_option_id"
   end
 
+  create_table "option_constraints", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "source_option_id", null: false
+    t.uuid "target_option_id", null: false
+    t.integer "constraint_type", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["source_option_id", "target_option_id", "constraint_type"], name: "index_option_constraints_uniqueness", unique: true
+    t.index ["source_option_id"], name: "index_option_constraints_on_source_option_id"
+    t.index ["target_option_id"], name: "index_option_constraints_on_target_option_id"
+  end
+
   create_table "part_options", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
     t.decimal "base_price"
@@ -86,6 +97,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_16_100000) do
   add_foreign_key "cart_items", "products"
   add_foreign_key "conditional_prices", "part_options", column: "context_option_id"
   add_foreign_key "conditional_prices", "part_options", column: "option_id"
+  add_foreign_key "option_constraints", "part_options", column: "source_option_id"
+  add_foreign_key "option_constraints", "part_options", column: "target_option_id"
   add_foreign_key "part_options", "parts"
   add_foreign_key "parts", "products"
 end
