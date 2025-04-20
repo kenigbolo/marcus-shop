@@ -89,8 +89,8 @@ const updateConstraint = async (updatedConstraint) => {
     }
     toast.success("Constraint updated!")
   } catch (err) {
-    toast.error("Failed to update constraint")
-    console.error(err)
+    const error = err?.response?.data?.errors?.[0]
+    error ? toast.error(error) : toast.error('Failed to update constraint')
   }
 }
 
@@ -102,7 +102,8 @@ const deleteConstraint = async (id) => {
     constraints.value = constraints.value.filter(c => c.id !== id)
     toast.success('Deleted constraint')
   } catch (err) {
-    toast.error('Failed to delete constraint')
+    const error = err?.response?.data?.errors?.[0]
+    error ? toast.error(error) : toast.error('Failed to delete constraint')
   }
 }
 
