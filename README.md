@@ -170,7 +170,7 @@ To run the tests you can run them via either docker or directly within the app
 ## 📝 To Do
 
 ### Backend
-- [ ] Enforce constraints (e.g. invalid combinations)
+- [x] Enforce constraints (e.g. invalid combinations)
 - [x] Filter out-of-stock options
 - [x] Support quantity update and checkout
 - [ ] Support checkout
