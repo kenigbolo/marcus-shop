@@ -8,7 +8,8 @@
       Constraints for: {{ optionName || 'Selected Option' }}
     </h1>
 
-    <form @submit.prevent="submitConstraint" class="space-y-4">
+    <!-- Create Form -->
+    <form @submit.prevent="submitConstraint" class="space-y-4 mb-8">
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Part</label>
         <select v-model="selectedPartId" class="input">
@@ -62,9 +63,50 @@
           :key="constraint.id"
           class="flex justify-between items-center p-3 text-sm"
         >
-          <div>
+          <div v-if="editingId !== constraint.id">
             <span class="font-medium">{{ constraint.constraint_type.toUpperCase() }}</span> → 
             {{ getOptionName(constraint.target_option_id) }}
+          </div>
+
+          <!-- Edit Form -->
+          <div v-else class="flex gap-2 items-center w-full">
+            <select v-model="editConstraintType" class="input w-1/2">
+              <option value="prohibits">Prohibits</option>
+              <option value="requires">Requires</option>
+            </select>
+            <select v-model="editTargetOptionId" class="input w-1/2">
+              <option
+                v-for="opt in allOptionsExcludingSource"
+                :key="opt.id"
+                :value="opt.id"
+              >
+                {{ opt.name }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex gap-2">
+            <button
+              v-if="editingId !== constraint.id"
+              @click="startEdit(constraint)"
+              class="text-xs bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-1 rounded"
+            >
+              Edit
+            </button>
+            <button
+              v-else
+              @click="saveEdit(constraint.id)"
+              class="text-xs bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded"
+            >
+              Save
+            </button>
+            <button
+              @click="deleteConstraint(constraint.id)"
+              class="text-xs bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded"
+            >
+              Delete
+            </button>
           </div>
         </li>
       </ul>
@@ -89,6 +131,10 @@ const selectedPartId = ref('')
 const selectedOptionId = ref('')
 const constraintType = ref('prohibits')
 
+const editingId = ref(null)
+const editConstraintType = ref('')
+const editTargetOptionId = ref('')
+
 const parts = ref([])
 const constraints = ref([])
 const url = ref('http://localhost:3000/api')
@@ -98,7 +144,7 @@ const fetchParts = async () => {
     const res = await api.get(`${url.value}/products/${productId}`)
     parts.value = res.data.parts || []
   } catch (err) {
-    toast.error('Failed to load parts for constraint')
+    toast.error('Failed to load parts')
     console.error(err)
   }
 }
@@ -113,12 +159,16 @@ const fetchConstraints = async () => {
 }
 
 const availableParts = computed(() => {
-  // Find the part that includes the source option
   const parentPart = parts.value.find(part =>
     part.part_options.some(option => option.id === optionId)
   )
-  // Exclude it from the dropdown
   return parts.value.filter(part => part.id !== parentPart?.id)
+})
+
+const allOptionsExcludingSource = computed(() => {
+  return parts.value
+    .flatMap(p => p.part_options)
+    .filter(opt => opt.id !== optionId)
 })
 
 const optionsForSelectedPart = computed(() => {
@@ -143,7 +193,6 @@ const submitConstraint = async () => {
     })
     constraints.value.push(data)
     toast.success('Constraint added!')
-    // reset
     selectedPartId.value = ''
     selectedOptionId.value = ''
     constraintType.value = 'prohibits'
@@ -153,9 +202,43 @@ const submitConstraint = async () => {
   }
 }
 
+const startEdit = (constraint) => {
+  editingId.value = constraint.id
+  editConstraintType.value = constraint.constraint_type
+  editTargetOptionId.value = constraint.target_option_id
+}
+
+const saveEdit = async (id) => {
+  try {
+    const res = await api.patch(`${url.value}/option_constraints/${id}`, {
+      option_constraint: {
+        constraint_type: editConstraintType.value,
+        target_option_id: editTargetOptionId.value
+      }
+    })
+    const idx = constraints.value.findIndex(c => c.id === id)
+    constraints.value[idx] = res.data
+    toast.success('Constraint updated')
+    editingId.value = null
+  } catch (err) {
+    toast.error('Failed to save constraint')
+  }
+}
+
+const deleteConstraint = async (id) => {
+  if (!confirm('Are you sure?')) return
+  try {
+    await api.delete(`${url.value}/option_constraints/${id}`)
+    constraints.value = constraints.value.filter(c => c.id !== id)
+    toast.success('Deleted constraint')
+  } catch (err) {
+    toast.error('Failed to delete constraint')
+  }
+}
+
 onMounted(() => {
-  fetchConstraints()
   fetchParts()
+  fetchConstraints()
 })
 </script>
 
