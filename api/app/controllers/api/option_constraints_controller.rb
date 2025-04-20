@@ -17,6 +17,17 @@ module Api
         render json: { errors: constraint.errors.full_messages }, status: :unprocessable_entity
       end
     end
+
+    def update
+      constraint = OptionConstraint.find(params[:id])
+    
+      if constraint.update(option_constraint_params)
+        render json: constraint
+      else
+        render json: { errors: constraint.errors.full_messages }, status: :unprocessable_entity
+      end
+    end
+        
   
     private
   

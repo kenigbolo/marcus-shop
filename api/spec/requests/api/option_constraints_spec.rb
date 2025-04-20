@@ -64,5 +64,33 @@ RSpec.describe 'OptionConstraints API', type: :request do
       expect(json['errors']).to be_an(Array)
       expect(json['errors']).to include("Target option must exist")
     end
+  end
+  
+  describe 'PATCH /api/option_constraints/:id' do
+    let!(:product) { Product.create!(name: 'Test', category: 'bikes', description: 'sample', is_active: true) }
+    let!(:part) { product.parts.create!(name: 'Frame') }
+    let!(:source) { part.part_options.create!(name: 'Steel', base_price: 100, stock_status: 'available') }
+    let!(:target) { part.part_options.create!(name: 'Aluminum', base_price: 110, stock_status: 'available') }
+    let!(:constraint) { OptionConstraint.create!(source_option: source, target_option: target, constraint_type: :prohibits) }
+  
+    it 'updates the constraint type' do
+      patch "http://localhost:3000/api/option_constraints/#{constraint.id}", params: {
+        option_constraint: { constraint_type: 'requires' }
+      }, headers: { 'X-User-ID' => SecureRandom.uuid }
+  
+      expect(response).to have_http_status(:ok)
+      json = JSON.parse(response.body)
+      expect(json['constraint_type']).to eq('requires')
+    end
+  
+    it 'returns 422 with invalid data' do
+      patch "http://localhost:3000/api/option_constraints/#{constraint.id}", params: {
+        option_constraint: { constraint_type: nil }
+      }, headers: { 'X-User-ID' => SecureRandom.uuid }
+  
+      expect(response).to have_http_status(:unprocessable_entity)
+      json = JSON.parse(response.body)
+      expect(json['errors']).to include("Constraint type can't be blank")
+    end
   end  
 end

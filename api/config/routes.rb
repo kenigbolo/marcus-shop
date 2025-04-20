@@ -3,7 +3,9 @@ Rails.application.routes.draw do
     resources :carts, only: [:show, :create] do
       resources :items, controller: 'cart_items', only: [:create, :update, :destroy]
     end
+
     resources :carts, only: [:show, :create]
+
     resources :products, only: [:index, :show, :create, :update, :destroy] do
       resources :parts, only: [:index, :create]
     end
@@ -16,6 +18,8 @@ Rails.application.routes.draw do
       resources :conditional_prices, only: [:index, :create]
       resources :constraints, only: [:index, :create], controller: 'option_constraints'
     end
+
+    resources :option_constraints, only: [:update]
     
     resources :conditional_prices, only: [:update, :destroy]
   end
