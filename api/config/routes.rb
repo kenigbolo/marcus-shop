@@ -14,7 +14,7 @@ Rails.application.routes.draw do
 
     resources :part_options, only: [:update, :destroy] do
       resources :conditional_prices, only: [:index, :create]
-      resources :constraints, only: [:index], controller: 'option_constraints'
+      resources :constraints, only: [:index, :create], controller: 'option_constraints'
     end
     
     resources :conditional_prices, only: [:update, :destroy]

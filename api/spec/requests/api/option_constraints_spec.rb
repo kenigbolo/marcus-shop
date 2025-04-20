@@ -30,4 +30,39 @@ RSpec.describe 'OptionConstraints API', type: :request do
       expect(json.first['target_option']['name']).to eq(option_b.name)
     end
   end
+
+  describe 'POST /api/part_options/:part_option_id/constraints' do
+    let!(:product) { Product.create!(name: 'Test', category: 'bikes', description: 'sample', is_active: true) }
+    let!(:part) { product.parts.create!(name: 'Wheels') }
+    let!(:source_option) { part.part_options.create!(name: 'Mountain', base_price: 100, stock_status: 'available') }
+    let!(:target_option) { part.part_options.create!(name: 'Full Suspension', base_price: 150, stock_status: 'available') }
+  
+    it 'creates a new option constraint and returns 201' do
+      post "http://localhost:3000/api/part_options/#{source_option.id}/constraints", params: {
+        option_constraint: {
+          target_option_id: target_option.id,
+          constraint_type: 'prohibits'
+        }
+      }, headers: { 'X-User-ID' => SecureRandom.uuid }
+  
+      expect(response).to have_http_status(:created)
+      json = JSON.parse(response.body)
+      expect(json['target_option_id']).to eq(target_option.id)
+      expect(json['constraint_type']).to eq('prohibits')
+    end
+  
+    it 'returns 422 with invalid data' do
+      post "http://localhost:3000/api/part_options/#{source_option.id}/constraints", params: {
+        option_constraint: {
+          target_option_id: nil,
+          constraint_type: nil
+        }
+      }, headers: { 'X-User-ID' => SecureRandom.uuid }
+  
+      expect(response).to have_http_status(:unprocessable_entity)
+      json = JSON.parse(response.body)
+      expect(json['errors']).to be_an(Array)
+      expect(json['errors']).to include("Target option must exist")
+    end
+  end  
 end
