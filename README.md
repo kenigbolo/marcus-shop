@@ -45,8 +45,9 @@ Before running the application, ensure the following are installed:
 
 2. **Set up environment variables**:
 
-   - Copy `.env.example` or `.env.docker` to `.env` inside both the `store/` and `admin/` directories:
+   - Copy `.env.example` to `.env` inside both the `store/`, `admin/` and `/api` directories:
       ```bash
+      cp api/.env.example api/.env
       cp store/.env.example store/.env
       cp admin/.env.example admin/.env
       ```
@@ -57,6 +58,7 @@ Before running the application, ensure the following are installed:
       VITE_USER_ID=3f2c1de2-b879-4f0e-980f-16a48db451c7 # Store
       VITE_ADMIN_ID=3f2c1de2-b879-4f0e-980f-16a48db451c7 # Admin
       ```
+   - 
 
 3. **Install frontend dependencies**:
 
@@ -95,6 +97,14 @@ To seed the Rails database via Docker:
 
 ```bash
 docker-compose exec api rails db:drop db:create db:migrate db:seed
+```
+
+To clean up docker and run a fresh build, from the root folder run:
+
+```bash
+chmod +x reset_and_rebuild.sh
+
+./reset_and_rebuild.sh
 ```
 
 ---
