@@ -95,7 +95,7 @@
 
 ---
 
-## 🧑‍💼 Admin Panel (Vue + Vite) — *Not Started Yet*
+## 🧑‍💼 Admin Panel (Vue + Vite)
 
 ### 🔹 Base Setup
 - [x] Initialize Vue project (`/admin`)
