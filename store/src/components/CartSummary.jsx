@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import api from '../api'
 import toast from 'react-hot-toast'
 import { useCart } from '../context/CartContext'
 import { TrashIcon } from '@heroicons/react/24/outline'
@@ -11,9 +11,7 @@ export default function CartSummary({ cartId }) {
 
   const loadCart = () => {
     setLoading(true)
-    axios.get(`${import.meta.env.VITE_API_BASE_URL}/carts/${cartId}`, {
-      headers: { 'X-User-ID': import.meta.env.VITE_USER_ID }
-    })
+    api.get(`/carts/${cartId}`)
     .then(res => setCart(res.data))
     .catch(() => toast.error("Failed to load cart"))
     .finally(() => setLoading(false))
@@ -25,9 +23,7 @@ export default function CartSummary({ cartId }) {
 
   const handleRemove = async (itemId) => {
     try {
-      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/carts/${cartId}/items/${itemId}`, {
-        headers: { 'X-User-ID': import.meta.env.VITE_USER_ID }
-      })
+      await api.delete(`/carts/${cartId}/items/${itemId}`)
       toast.success("Item removed from cart")
       refreshCartCount()
       loadCart()
@@ -40,10 +36,8 @@ export default function CartSummary({ cartId }) {
     const newQuantity = Number(e.target.value)
     if (newQuantity < 1) return
     try {
-      await axios.patch(`${import.meta.env.VITE_API_BASE_URL}/carts/${cartId}/items/${item.id}`, {
+      await api.patch(`/carts/${cartId}/items/${item.id}`, {
         quantity: newQuantity
-      }, {
-        headers: { 'X-User-ID': import.meta.env.VITE_USER_ID }
       })
 
       toast.success("Quantity updated")

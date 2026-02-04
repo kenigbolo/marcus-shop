@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-import axios from 'axios'
+import api from '../api'
 
 const CartContext = createContext()
 
@@ -8,9 +8,7 @@ export const CartProvider = ({ cartId, children }) => {
 
   const refreshCartCount = () => {
     if (!cartId) return
-    axios.get(`${import.meta.env.VITE_API_BASE_URL}/carts/${cartId}`, {
-      headers: { 'X-User-ID': import.meta.env.VITE_USER_ID }
-    })
+    api.get(`/carts/${cartId}`)
     .then(res => {
       const count = res.data.cart_items?.reduce((sum, item) => sum + (item.quantity || 1), 0) || 0
       setItemCount(count)

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Outlet, Link } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { ShoppingCartIcon } from '@heroicons/react/24/outline'
-import axios from 'axios'
+import api from './api'
 import { CartProvider, useCart } from './context/CartContext'
 
 function AppLayout({ cartId }) {
@@ -32,11 +32,7 @@ export default function App() {
   const [cartId, setCartId] = useState(null)
 
   useEffect(() => {
-    axios.post(`${import.meta.env.VITE_API_BASE_URL}/carts`, {}, {
-      headers: {
-        'X-User-ID': import.meta.env.VITE_USER_ID
-      }
-    })
+    api.post('/carts', {})
     .then(res => setCartId(res.data.id))
   }, [])
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useOutletContext, Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
-import axios from 'axios'
+import api from '../api'
 import { useCart } from '../context/CartContext'
 import { AnimatePresence, motion } from 'framer-motion'
 
@@ -15,9 +15,7 @@ export default function ProductDetail() {
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_API_BASE_URL}/products/${id}`, {
-      headers: { 'X-User-ID': import.meta.env.VITE_USER_ID }
-    }).then(res => setProduct(res.data))
+    api.get(`/products/${id}`).then(res => setProduct(res.data))
   }, [id])
 
   const handleSelect = (partId, optionId) => {
@@ -60,12 +58,10 @@ export default function ProductDetail() {
     if (!product) return
     setSubmitting(true)
     try {
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/carts/${cartId}/items`, {
+      await api.post(`/carts/${cartId}/items`, {
         product_id: product.id,
         quantity: 1,
         selected_option_ids: Object.values(selectedOptions)
-      }, {
-        headers: { 'X-User-ID': import.meta.env.VITE_USER_ID }
       })
       toast.success("Item added to cart!")
       refreshCartCount()
