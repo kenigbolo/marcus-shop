@@ -6,11 +6,35 @@ export default function ProductList() {
   const [products, setProducts] = useState([])
 
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_API_BASE_URL}/products`, {
-      headers: {
-        'X-User-ID': import.meta.env.VITE_USER_ID
+    function logApiError(err) {
+      const details = {
+        message: err?.message,
+        status: err?.response?.status,
+        url: err?.config?.url,
+        method: err?.config?.method,
+        requestHeaders: err?.config?.headers,
+        responseData: err?.response?.data,
+        userAgent: (typeof navigator !== 'undefined' && navigator.userAgent) || null,
+        page: (typeof window !== 'undefined' && window.location.href) || null
       }
-    }).then(res => setProducts(res.data))
+      // Structured log for easier searching in browser/remote logs
+      console.error('API Error:', details)
+    }
+
+    console.log('API URL:', import.meta.env.VITE_API_BASE_URL)
+    console.log('User ID:', import.meta.env.VITE_USER_ID)
+
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/products`, {
+      headers: { 'X-User-ID': import.meta.env.VITE_USER_ID }
+    })
+      .then(res => {
+        console.log('Products loaded:', Array.isArray(res.data) ? res.data.length + ' items' : typeof res.data)
+        setProducts(res.data)
+      })
+      .catch(err => {
+        logApiError(err)
+        setProducts([])
+      })
   }, [])
 
   return (
