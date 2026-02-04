@@ -3,6 +3,7 @@ import { useParams, useOutletContext, Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import api from '../api'
 import { useCart } from '../context/CartContext'
+import { usePriceCalculation } from '../hooks/usePriceCalculation'
 import { AnimatePresence, motion } from 'framer-motion'
 
 export default function ProductDetail() {
@@ -32,27 +33,7 @@ export default function ProductDetail() {
   }
   
 
-  const calculateTotalPrice = () => {
-    if (!product || !product.parts) return 0
-
-    const selectedOptionList = Object.values(selectedOptions)
-    let total = 0
-
-    for (const part of product.parts) {
-      const selectedId = selectedOptions[part.id]
-      const option = part.part_options?.find(opt => opt.id === selectedId)
-      if (!option) continue
-
-      const condition = option.conditional_prices?.find(cp =>
-        selectedOptionList.includes(cp.context_option_id)
-      )
-
-      const finalPrice = Number((condition?.price_override ?? option.base_price) ?? 0)
-      total += finalPrice
-    }
-
-    return total
-  }
+  const calculateTotalPrice = () => usePriceCalculation(product, selectedOptions)
 
   const handleAddToCart = async () => {
     if (!product) return
